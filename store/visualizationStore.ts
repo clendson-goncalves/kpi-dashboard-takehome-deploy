@@ -22,6 +22,7 @@ interface VisualizationState {
   removeAnnotation: (kpiId: string, index: number) => void
   saveLayout: (name: string) => void
   loadLayout: (layoutId: string) => void
+  deleteLayout: (layoutId: string) => void
 }
 
 export const useVisualizationStore = create<VisualizationState>((set, get) => ({
@@ -53,14 +54,14 @@ export const useVisualizationStore = create<VisualizationState>((set, get) => ({
     if (!selectedKpiId || !selectedChartType) return
 
     // Check if KPI is already in layout
-    const existingIndex = currentLayout.visualizations.findIndex((v) => v.kpiId === selectedKpiId)
+    const existingIndex = currentLayout.visualizations.findIndex((v: KPIVisualization) => v.kpiId === selectedKpiId)
 
     if (existingIndex !== -1) {
       // Update existing visualization
       set((state) => ({
         currentLayout: {
           ...state.currentLayout,
-          visualizations: state.currentLayout.visualizations.map((vis, index) =>
+          visualizations: state.currentLayout.visualizations.map((vis: KPIVisualization, index: number) =>
             index === existingIndex ? { ...vis, chartConfig: { ...vis.chartConfig, type: selectedChartType } } : vis,
           ),
         },
@@ -94,7 +95,7 @@ export const useVisualizationStore = create<VisualizationState>((set, get) => ({
     set((state) => ({
       currentLayout: {
         ...state.currentLayout,
-        visualizations: state.currentLayout.visualizations.filter((v) => v.kpiId !== kpiId),
+        visualizations: state.currentLayout.visualizations.filter((v: KPIVisualization) => v.kpiId !== kpiId),
       },
     }))
   },
@@ -103,48 +104,46 @@ export const useVisualizationStore = create<VisualizationState>((set, get) => ({
     set((state) => ({
       currentLayout: {
         ...state.currentLayout,
-        visualizations: state.currentLayout.visualizations.map((vis) =>
-          vis.kpiId === kpiId ? { ...vis, position } : vis,
+        visualizations: state.currentLayout.visualizations.map((v: KPIVisualization) =>
+          v.kpiId === kpiId ? { ...v, position } : v,
         ),
       },
     }))
   },
 
   addAnnotation: (kpiId, annotation) => {
-    set((state) => {
-      const currentAnnotations = state.annotations[kpiId] || []
-      return {
-        annotations: {
-          ...state.annotations,
-          [kpiId]: [...currentAnnotations, annotation],
-        },
-      }
-    })
+    set((state) => ({
+      annotations: {
+        ...state.annotations,
+        [kpiId]: [...(state.annotations[kpiId] || []), annotation],
+      },
+    }))
   },
 
   removeAnnotation: (kpiId, index) => {
-    set((state) => {
-      const currentAnnotations = state.annotations[kpiId] || []
-      return {
-        annotations: {
-          ...state.annotations,
-          [kpiId]: currentAnnotations.filter((_, i) => i !== index),
-        },
-      }
-    })
+    set((state) => ({
+      annotations: {
+        ...state.annotations,
+        [kpiId]: state.annotations[kpiId].filter((_, i) => i !== index),
+      },
+    }))
   },
 
   saveLayout: (name) => {
     const { currentLayout } = get()
     const newLayout: DashboardLayout = {
-      ...currentLayout,
-      id: `layout-${Date.now()}`,
+      id: Date.now().toString(),
       name,
+      visualizations: currentLayout.visualizations,
     }
 
     set((state) => ({
       layouts: [...state.layouts, newLayout],
-      currentLayout: newLayout,
+      currentLayout: {
+        id: "default",
+        name: "Default Layout",
+        visualizations: [],
+      },
     }))
   },
 
@@ -152,8 +151,14 @@ export const useVisualizationStore = create<VisualizationState>((set, get) => ({
     const { layouts } = get()
     const layout = layouts.find((l) => l.id === layoutId)
     if (layout) {
-      set({ currentLayout: layout })
+      set({ currentLayout: { ...layout } })
     }
+  },
+
+  deleteLayout: (layoutId) => {
+    set((state) => ({
+      layouts: state.layouts.filter((l) => l.id !== layoutId),
+    }))
   },
 }))
 

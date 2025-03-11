@@ -18,7 +18,8 @@ import {
   YAxis,
   CartesianGrid,
   Legend,
-  Cell,
+  Tooltip,
+  Cell
 } from "recharts"
 import {
   Select,
@@ -53,7 +54,7 @@ type PieChartData = {
 
 export function KPIDetailsModal({ kpi, isOpen, onClose }: KPIDetailsModalProps) {
   const [selectedChart, setSelectedChart] = useState<ChartType>(availableChartTypes[kpi.id][0])
-  
+
   if (!isOpen) return null
 
   const chartData = mockChartData[kpi.id as keyof typeof mockChartData] as ChartData
@@ -72,14 +73,14 @@ export function KPIDetailsModal({ kpi, isOpen, onClose }: KPIDetailsModalProps) 
   }
 
   const data = getChartData()
-  
+
   const renderChart = () => {
     if (!data.length) return <div className="bg-gray-100 h-64 rounded-lg" />
 
     switch (selectedChart) {
       case "line":
         return (
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={250}>
             <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
               <XAxis dataKey="year" />
@@ -154,9 +155,8 @@ export function KPIDetailsModal({ kpi, isOpen, onClose }: KPIDetailsModalProps) 
 
   return (
     <div className="fixed inset-0 bg-black/20 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg w-full max-w-3xl max-h-[90vh] overflow-auto">
-        <div className="flex justify-between items-center p-4 border-b">
-          <div className="flex-1"></div>
+      <div className="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] overflow-auto">
+        <div className="flex justify-end items-center p-4">
           <div className="flex space-x-2">
             <Button variant="ghost" size="icon">
               <Link2 className="h-5 w-5" />
@@ -167,62 +167,60 @@ export function KPIDetailsModal({ kpi, isOpen, onClose }: KPIDetailsModalProps) 
           </div>
         </div>
 
-        <div className="p-6">
-          <div className="flex flex-col items-center mb-6">
-            <div className="w-16 h-16 bg-gray-100 rounded-md flex items-center justify-center mb-4">
-              <Grid className="h-8 w-8 text-gray-500" />
+        <div className="p-4">
+          <div className="flex flex-col items-center mb-4">
+            <div className="w-12 h-12 bg-gray-100 rounded-md flex items-center justify-center mb-3">
+              <Grid className="h-6 w-6 text-gray-500" />
             </div>
-            <h1 className="text-3xl font-bold mb-1">{kpi.name}</h1>
-            <p className="text-gray-500 mb-1">{kpi.category}</p>
-            <p className="text-gray-500 text-sm">{kpi.description}</p>
+            <h1 className="text-2xl font-bold mb-1">{kpi.name} <Badge variant="outline" className="align-middle bg-gray-100 hover:bg-gray-50 text-gray-700">{kpi.category}</Badge></h1>
+            <p className="text-gray-500 text-xs">{kpi.description}</p>
           </div>
 
-          <p className="text-center mb-4 max-w-xl mx-auto">
-            {kpi.industryContext}
+          <p className="text-center mb-4 max-w-96 mx-auto text-sm">
+            {kpi.calculation}
           </p>
 
-          <div className="flex justify-center gap-2 mb-6">
-            <Badge variant="outline" className="bg-gray-50 hover:bg-gray-50 text-gray-700">
+          <div className="flex justify-center gap-2 mb-4">
+            <Badge variant="outline" className="bg-gray-50 hover:bg-gray-50 text-gray-700 text-xs">
               #{kpi.category.toLowerCase()}
-            </Badge>
-            <Badge variant="outline" className="bg-gray-50 hover:bg-gray-50 text-gray-700">
+            </Badge> 
+            <Badge variant="outline" className="bg-gray-50 hover:bg-gray-50 text-gray-700 text-xs">
               #{kpi.accessLevel}
             </Badge>
-            <Badge variant="outline" className="bg-gray-50 hover:bg-gray-50 text-gray-700">
+            <Badge variant="outline" className="bg-gray-50 hover:bg-gray-50 text-gray-700 text-xs">
               #metrics
             </Badge>
           </div>
 
-          <div className="grid grid-cols-4 gap-4 mb-8 text-center">
+          <div className="grid grid-cols-4 gap-4 mb-4 text-center divide-x divide-gray-300">
             <div>
-              <p className="font-bold text-lg">2485</p>
-              <div className="flex items-center justify-center gap-1 text-gray-500 text-sm">
+              <p className="font-bold text-base">2485</p>
+              <div className="flex items-center justify-center gap-1 text-gray-500 text-xs">
                 Used
                 <Info className="h-3 w-3" />
               </div>
             </div>
             <div>
-              <p className="font-bold text-lg">Universal</p>
-              <p className="text-gray-500 text-sm">Type</p>
+              <p className="font-bold text-base">{kpi.accessLevel}</p>
+              <p className="text-gray-500 text-xs">Access Level</p>
             </div>
             <div>
-              <p className="font-bold text-lg">6</p>
-              <div className="flex items-center justify-center gap-1 text-gray-500 text-sm">
-                Pages No.
+              <p className="font-bold text-base">{kpi.target}</p>
+              <div className="flex items-center justify-center gap-1 text-gray-500 text-xs">
+                Target No.
                 <Info className="h-3 w-3" />
               </div>
             </div>
             <div>
-              <p className="font-bold text-lg">07/23/2024</p>
-              <p className="text-gray-500 text-sm">Last Updated</p>
+              <p className="font-bold text-base">07/23/2024</p>
+              <p className="text-gray-500 text-xs">Last Updated</p>
             </div>
           </div>
 
-          <div className="mb-8">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">Visualization</h2>
+          <div className="mb-6">
+            <div className="flex items-center justify-end mb-4">
               <Select value={selectedChart} onValueChange={(value: ChartType) => setSelectedChart(value)}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-[140px]">
                   <SelectValue>
                     <div className="flex items-center gap-2">
                       {selectedChart === "line" && <LineChartIcon className="h-4 w-4" />}
@@ -246,49 +244,49 @@ export function KPIDetailsModal({ kpi, isOpen, onClose }: KPIDetailsModalProps) 
                 </SelectContent>
               </Select>
             </div>
-            <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="bg-gray-50 p-3 rounded-lg">
               {renderChart()}
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-6 mb-6">
+          <div className="grid grid-cols-2 gap-3 mb-6">
             <div>
-              <h2 className="text-xl font-bold mb-4">Business Questions</h2>
-              <div className="space-y-4">
+              <h2 className="text-lg font-bold mb-3">Business Questions</h2>
+              <div className="space-y-3">
                 {kpi.keyQuestions.map((question, index) => (
-                  <div key={index} className="bg-gray-50 p-4 rounded-lg">
-                    <h3 className="font-medium mb-1">Question {index + 1}</h3>
-                    <p className="text-gray-600 text-sm">{question}</p>
+                  <div key={index} className="bg-gray-50 p-2 rounded-lg">
+                    <h3 className="font-medium mb-1 text-sm">Question {index + 1}</h3>
+                    <p className="text-gray-600 text-xs">{question}</p>
                   </div>
                 ))}
               </div>
             </div>
-            
-            <div className="space-y-6">
+
+            <div className="space-y-3">
               <div>
-                <h2 className="text-xl font-bold mb-4">Data Sources</h2>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-gray-600 text-sm">{kpi.dataSources}</p>
+                <h2 className="text-lg font-bold mb-2">Data Sources</h2>
+                <div className="bg-gray-50 p-2 rounded-lg">
+                  <p className="text-gray-600 text-xs">{kpi.dataSources}</p>
                 </div>
               </div>
-              
+
               <div>
-                <h2 className="text-xl font-bold mb-4">Calculation</h2>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-gray-600 text-sm">{kpi.calculation}</p>
+                <h2 className="text-lg font-bold mb-2">Calculation</h2>
+                <div className="bg-gray-50 p-2 rounded-lg">
+                  <p className="text-gray-600 text-xs">{kpi.calculation}</p>
                 </div>
               </div>
-              
+
               <div>
-                <h2 className="text-xl font-bold mb-4">Industry Context</h2>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-gray-600 text-sm">{kpi.industryContext}</p>
+                <h2 className="text-lg font-bold mb-2">Industry Context</h2>
+                <div className="bg-gray-50 p-2 rounded-lg">
+                  <p className="text-gray-600 text-xs">{kpi.industryContext}</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <Button className="w-full bg-slate-900 hover:bg-slate-800">Favorite item</Button>
+          <Button className="w-full bg-slate-900 hover:bg-slate-800 text-sm">Favorite item</Button>
         </div>
       </div>
     </div>

@@ -5,7 +5,7 @@ import { useVisualizationStore } from "@/store/visualizationStore"
 import { mockChartData } from "@/data/mockData"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { X, MessageSquarePlus } from "lucide-react"
+import { X, MessageSquarePlus, GripVertical } from "lucide-react"
 import { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
@@ -24,8 +24,11 @@ import {
   ResponsiveContainer,
   XAxis,
   YAxis,
+  CartesianGrid,
+  Legend,
+  Tooltip,
 } from "recharts"
-import type { KPIVisualization } from "@/types/kpi"
+import type { KPIVisualization, ChartData, BarDataPoint, LineDataPoint, PieDataPoint, RadarDataPoint } from "@/types/kpi"
 
 export function ChartVisualization() {
   const { kpis } = useKpiStore()
@@ -43,33 +46,41 @@ export function ChartVisualization() {
   }
 
   const renderChart = (kpiId: string, chartType: string) => {
-    const chartData = mockChartData[kpiId as keyof typeof mockChartData]
+    const chartData = mockChartData[kpiId as keyof typeof mockChartData] as ChartData
     if (!chartData) return null
 
     switch (chartType) {
       case "bar":
-        const barData = chartData.barData
+        const barData = chartData.barData as BarDataPoint[]
+        if (!barData) return null
         return (
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={barData}>
+              <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey={Object.keys(barData[0]).find((key) => key !== "value")} />
               <YAxis />
+              <Tooltip />
+              <Legend />
               <Bar dataKey="value" fill="#8884d8" />
             </BarChart>
           </ResponsiveContainer>
         )
 
       case "line":
-        const lineData = chartData.lineData
+        const lineData = chartData.lineData as LineDataPoint[]
+        if (!lineData) return null
         return (
           <ResponsiveContainer width="100%" height={250}>
             <LineChart data={lineData}>
+              <CartesianGrid strokeDasharray="3 3" />
               <XAxis
                 dataKey={Object.keys(lineData[0]).find(
                   (key) => key !== "value" && key !== "success" && key !== "efficiency",
                 )}
               />
               <YAxis />
+              <Tooltip />
+              <Legend />
               <Line
                 type="monotone"
                 dataKey={Object.keys(lineData[0]).find(
@@ -82,8 +93,8 @@ export function ChartVisualization() {
         )
 
       case "pie":
-        if (!('pieData' in chartData)) return null
-        const pieData = chartData.pieData
+        const pieData = chartData.pieData as PieDataPoint[]
+        if (!pieData) return null
         return (
           <ResponsiveContainer width="100%" height={250}>
             <PieChart>
@@ -97,13 +108,15 @@ export function ChartVisualization() {
                 fill="#8884d8"
                 label
               />
+              <Tooltip />
+              <Legend />
             </PieChart>
           </ResponsiveContainer>
         )
 
       case "radar":
-        if (!('radarData' in chartData)) return null
-        const radarData = chartData.radarData
+        const radarData = chartData.radarData as RadarDataPoint[]
+        if (!radarData) return null
         return (
           <ResponsiveContainer width="100%" height={250}>
             <RadarChart cx="50%" cy="50%" outerRadius={80} data={radarData}>
@@ -111,6 +124,8 @@ export function ChartVisualization() {
               <PolarAngleAxis dataKey="metric" />
               <PolarRadiusAxis />
               <Radar name="Value" dataKey="value" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
+              <Tooltip />
+              <Legend />
             </RadarChart>
           </ResponsiveContainer>
         )
@@ -131,57 +146,46 @@ export function ChartVisualization() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="grid grid-cols-2 gap-4">
       {currentLayout.visualizations.map((visualization: KPIVisualization) => {
         const kpi = kpis.find((k) => k.id === visualization.kpiId)
         if (!kpi) return null
 
-        const kpiAnnotations = annotations[visualization.kpiId] || []
-
         return (
-          <Card key={visualization.kpiId} className="relative">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute top-2 right-2 h-8 w-8"
-              onClick={() => removeFromLayout(visualization.kpiId)}
-            >
-              <X className="h-4 w-4" />
-            </Button>
-
-            <CardHeader>
-              <CardTitle>{kpi.name}</CardTitle>
-              <CardDescription>{kpi.description}</CardDescription>
-            </CardHeader>
-
-            <CardContent>
-              {renderChart(visualization.kpiId, visualization.chartConfig.type)}
-
-              {kpiAnnotations.length > 0 && (
-                <div className="mt-4 space-y-2">
-                  <h4 className="text-sm font-medium">Annotations:</h4>
-                  <ul className="space-y-1">
-                    {kpiAnnotations.map((annotation, index) => (
-                      <li key={index} className="text-sm p-2 bg-muted rounded-md">
-                        {annotation}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
+          <Card key={visualization.kpiId} className="relative group">
+            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
               <Button
-                variant="outline"
-                size="sm"
-                className="mt-4"
+                variant="ghost"
+                size="icon"
                 onClick={() => {
                   setAnnotatingKpiId(visualization.kpiId)
                   setDialogOpen(true)
                 }}
               >
-                <MessageSquarePlus className="h-4 w-4 mr-2" />
-                Add Annotation
+                <MessageSquarePlus className="h-4 w-4" />
               </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => removeFromLayout(visualization.kpiId)}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+            <div className="absolute top-1/2 left-2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity cursor-move">
+              <GripVertical className="h-4 w-4 text-muted-foreground" />
+            </div>
+            <CardHeader>
+              <CardTitle className="text-lg">{kpi.name}</CardTitle>
+              <CardDescription>{kpi.description}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {renderChart(visualization.kpiId, visualization.chartConfig.type)}
+              {annotations[visualization.kpiId]?.map((annotation, index) => (
+                <div key={index} className="mt-2 p-2 bg-muted rounded-md text-sm">
+                  {annotation}
+                </div>
+              ))}
             </CardContent>
           </Card>
         )
@@ -192,21 +196,18 @@ export function ChartVisualization() {
           <DialogHeader>
             <DialogTitle>Add Annotation</DialogTitle>
           </DialogHeader>
-
           <div className="py-4">
             <Input
-              placeholder="Enter your insight or observation..."
+              placeholder="Enter your annotation..."
               value={annotationText}
               onChange={(e) => setAnnotationText(e.target.value)}
-              className="w-full"
             />
           </div>
-
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleAddAnnotation}>Add Annotation</Button>
+            <Button onClick={handleAddAnnotation}>Add</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -3,12 +3,13 @@
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { KPIList } from "@/components/kpi-selection/KPIList"
+import { LayoutsView } from "@/components/layouts/LayoutsView"
 
 export default function Home() {
   return (
     <div className="container mx-auto py-8 space-y-8">
       <div className="space-y-4">
-        <h1 className="text-4xl font-bold text-center">Library</h1>
+        <h1 className="text-5xl font-bold text-center">Library</h1>
         <p className="text-center text-muted-foreground">
           Browse for assets needed to report and present analysis.
         </p>
@@ -22,7 +23,7 @@ export default function Home() {
         />
       </div>
 
-      <Tabs defaultValue="featured" className="w-full">
+      <Tabs defaultValue="kpi" className="w-full">
         <TabsList className="w-full max-w-2xl mx-auto grid grid-cols-4">
           <TabsTrigger value="featured">Featured</TabsTrigger>
           <TabsTrigger value="kpi">KPI</TabsTrigger>
@@ -41,9 +42,7 @@ export default function Home() {
         </TabsContent>
 
         <TabsContent value="layouts" className="mt-6">
-          <div className="text-center text-muted-foreground py-8">
-            Layouts content coming soon
-          </div>
+          <LayoutsView />
         </TabsContent>
 
         <TabsContent value="storyboards" className="mt-6">

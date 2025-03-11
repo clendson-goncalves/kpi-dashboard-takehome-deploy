@@ -2,14 +2,17 @@
 
 import type { KPI } from "@/types/kpi"
 import { Card, CardContent } from "@/components/ui/card"
-import { Lock, ChevronUp } from "lucide-react"
+import { Lock, ChevronUp, Check } from "lucide-react"
 import { useState } from "react"
 import { KPIDetailsModal } from "./KPIDetailsModal"
 import { mockChartData } from "@/data/mockData"
+import { useVisualizationStore } from "@/store/visualizationStore"
+import { cn } from "@/lib/utils"
 
 interface KPICardProps {
   kpi: KPI
   onRequestAccess: () => void
+  selectable?: boolean
 }
 
 type ChartDataPoint = {
@@ -19,8 +22,9 @@ type ChartDataPoint = {
   success?: number
 }
 
-export function KPICard({ kpi, onRequestAccess }: KPICardProps) {
+export function KPICard({ kpi, onRequestAccess, selectable = false }: KPICardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const { selectedKpiId, selectKpi } = useVisualizationStore()
   
   // Get the latest value from chart data
   const chartData = mockChartData[kpi.id as keyof typeof mockChartData]
@@ -46,22 +50,45 @@ export function KPICard({ kpi, onRequestAccess }: KPICardProps) {
   const trend = latestValue > previousValue
   const trendValue = ((latestValue - previousValue) / previousValue * 100).toFixed(1)
 
+  const isSelected = selectedKpiId === kpi.id
+
+  const handleClick = () => {
+    if (!kpi.hasAccess) {
+      onRequestAccess()
+      return
+    }
+
+    if (selectable) {
+      selectKpi(kpi.id)
+    } else {
+      setIsModalOpen(true)
+    }
+  }
+
   return (
     <>
       <Card 
-        className="cursor-pointer transition-all hover:shadow-md"
-        onClick={() => kpi.hasAccess ? setIsModalOpen(true) : onRequestAccess()}
+        className={cn(
+          "cursor-pointer transition-all hover:shadow-md",
+          isSelected && "ring-2 ring-primary"
+        )}
+        onClick={handleClick}
       >
         <CardContent className="pt-6">
           <div className="flex flex-col">
             <div className="flex justify-between items-start mb-4">
-              <div>
+              <div className="flex-1">
                 <h3 className="font-medium text-sm">{kpi.name}</h3>
                 <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{kpi.description}</p>
               </div>
-              {kpi.accessLevel === "restricted" && !kpi.hasAccess && (
-                <Lock className="h-4 w-4 text-muted-foreground" />
-              )}
+              <div className="flex items-center gap-2">
+                {kpi.accessLevel === "restricted" && !kpi.hasAccess && (
+                  <Lock className="h-4 w-4 text-muted-foreground" />
+                )}
+                {isSelected && (
+                  <Check className="h-4 w-4 text-primary" />
+                )}
+              </div>
             </div>
             
             <div className="flex flex-col">
@@ -80,7 +107,7 @@ export function KPICard({ kpi, onRequestAccess }: KPICardProps) {
         </CardContent>
       </Card>
 
-      {kpi.hasAccess && (
+      {kpi.hasAccess && !selectable && (
         <KPIDetailsModal 
           kpi={kpi}
           isOpen={isModalOpen}

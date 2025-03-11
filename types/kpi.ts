@@ -1,5 +1,52 @@
-// KPI access levels
+// Access levels
 export type AccessLevel = "public" | "restricted"
+
+// Chart types supported by our dashboard
+export type ChartType = "bar" | "line" | "pie" | "area" | "radar"
+
+// Chart data points
+export interface LineDataPoint {
+  month?: string
+  quarter?: string
+  year?: string
+  value?: number
+  success?: number
+  efficiency?: number
+  share?: number
+}
+
+export interface BarDataPoint {
+  area?: string
+  phase?: string
+  region?: string
+  metric?: string
+  value: number
+  count?: number
+  share?: number
+}
+
+export interface PieDataPoint {
+  area?: string
+  region?: string
+  competitor?: string
+  value: number
+  count?: number
+  share?: number
+}
+
+export interface RadarDataPoint {
+  metric: string
+  value: number
+  fullMark: number
+}
+
+// Chart data structure
+export interface ChartData {
+  lineData?: LineDataPoint[]
+  barData?: BarDataPoint[]
+  pieData?: PieDataPoint[]
+  radarData?: RadarDataPoint[]
+}
 
 // KPI data structure
 export interface KPI {
@@ -15,9 +62,6 @@ export interface KPI {
   industryContext: string
   hasAccess: boolean
 }
-
-// Chart types supported by our dashboard
-export type ChartType = "bar" | "line" | "pie" | "area" | "radar"
 
 // Chart configuration
 export interface ChartConfig {
