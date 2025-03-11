@@ -8,6 +8,7 @@ export const kpiData: KPI[] = [
     description: "Measures the percentage increase in revenue over a specific period",
     category: "Financial",
     accessLevel: "public",
+    target: 8.5,
     keyQuestions: [
       "How is our revenue trending compared to forecasts?",
       "Which therapeutic areas are driving growth?",
@@ -31,6 +32,7 @@ export const kpiData: KPI[] = [
     description: "Tracks the number and progress of products in development",
     category: "Research",
     accessLevel: "public",
+    target: 70,
     keyQuestions: [
       "How many compounds are in each phase of development?",
       "What is our success rate from Phase I to approval?",
@@ -54,6 +56,7 @@ export const kpiData: KPI[] = [
     description: "Measures the percentage of total market sales captured by the company",
     category: "Market",
     accessLevel: "public",
+    target: 30,
     keyQuestions: [
       "How is our market position changing in key therapeutic areas?",
       "Which geographic markets show the strongest/weakest performance?",
@@ -78,6 +81,7 @@ export const kpiData: KPI[] = [
     description: "Evaluates the efficiency of manufacturing and supply chain operations",
     category: "Operations",
     accessLevel: "restricted",
+    target: 95,
     keyQuestions: [
       "How efficient is our manufacturing process compared to industry standards?",
       "What is our on-time delivery rate for products?",

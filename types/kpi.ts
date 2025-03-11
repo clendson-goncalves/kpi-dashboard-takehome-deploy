@@ -8,6 +8,7 @@ export interface KPI {
   description: string
   category: string
   accessLevel: AccessLevel
+  target: number
   keyQuestions: string[]
   dataSources: string[]
   calculation: string
