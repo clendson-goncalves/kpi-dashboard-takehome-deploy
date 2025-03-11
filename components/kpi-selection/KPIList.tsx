@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useKpiStore } from "@/store/kpiStore"
 import { KPICard } from "./KPICard"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { categories } from "@/data/mockData"
 import {
@@ -63,7 +64,7 @@ export function KPIList() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {filteredKpis.map((kpi) => (
           <KPICard key={kpi.id} kpi={kpi} onRequestAccess={() => handleRequestAccess(kpi.id)} />
         ))}
@@ -77,7 +78,7 @@ export function KPIList() {
           </DialogHeader>
 
           <div className="py-4">
-            <Input
+            <Textarea
               placeholder="Enter your reason..."
               value={accessReason}
               onChange={(e) => setAccessReason(e.target.value)}
