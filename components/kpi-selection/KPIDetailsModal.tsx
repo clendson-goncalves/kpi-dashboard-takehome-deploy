@@ -1,7 +1,8 @@
 "use client"
 
-import type { KPI } from "@/types/kpi"
-import { X, Link2, Grid, Info } from "lucide-react"
+import { useState } from "react"
+import type { KPI, ChartType } from "@/types/kpi"
+import { X, Link2, Grid, Info, BarChart as BarChartIcon, LineChart as LineChartIcon, PieChart as PieChartIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { mockChartData, availableChartTypes } from "@/data/mockData"
@@ -15,7 +16,17 @@ import {
   ResponsiveContainer,
   XAxis,
   YAxis,
+  CartesianGrid,
+  Legend,
+  Cell,
 } from "recharts"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 interface KPIDetailsModalProps {
   kpi: KPI
@@ -27,73 +38,118 @@ type ChartData = {
   lineData?: { [key: string]: string | number }[]
   barData?: { [key: string]: string | number }[]
   pieData?: { [key: string]: string | number }[]
-  radarData?: { [key: string]: string | number }[]
+}
+
+type QuarterlyData = {
+  quarter: string
+  value: number
+  target: number
+}
+
+type PieChartData = {
+  name: string
+  value: number
 }
 
 export function KPIDetailsModal({ kpi, isOpen, onClose }: KPIDetailsModalProps) {
+  const [selectedChart, setSelectedChart] = useState<ChartType>(availableChartTypes[kpi.id][0])
+  
   if (!isOpen) return null
 
   const chartData = mockChartData[kpi.id as keyof typeof mockChartData] as ChartData
 
-  const renderCharts = () => {
-    if (!chartData) return <div className="bg-gray-100 h-64 rounded-lg" />
+  const getChartData = () => {
+    switch (selectedChart) {
+      case "line":
+        return chartData.lineData || []
+      case "bar":
+        return chartData.barData || []
+      case "pie":
+        return chartData.pieData || []
+      default:
+        return []
+    }
+  }
 
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {chartData.barData && (
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={chartData.barData}>
-                <XAxis dataKey={Object.keys(chartData.barData[0]).find((key) => key !== "value")} />
-                <YAxis />
-                <Bar dataKey="value" fill="#8884d8" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        )}
+  const data = getChartData()
+  
+  const renderChart = () => {
+    if (!data.length) return <div className="bg-gray-100 h-64 rounded-lg" />
 
-        {chartData.lineData && (
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <ResponsiveContainer width="100%" height={250}>
-              <LineChart data={chartData.lineData}>
-                <XAxis dataKey={Object.keys(chartData.lineData[0]).find(
-                  (key) => key !== "value" && key !== "success" && key !== "efficiency"
-                )} />
-                <YAxis />
+    switch (selectedChart) {
+      case "line":
+        return (
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+              <XAxis dataKey="year" />
+              <YAxis />
+              <Line
+                type="monotone"
+                dataKey="value"
+                stroke="#2563eb"
+                strokeWidth={2}
+                dot={{ r: 3 }}
+                name="Value"
+              />
+              {data[0]?.hasOwnProperty("target") && (
                 <Line
                   type="monotone"
-                  dataKey={Object.keys(chartData.lineData[0]).find(
-                    (key) => key === "value" || key === "success" || key === "efficiency" || key === "share"
-                  )}
-                  stroke="#8884d8"
+                  dataKey="target"
+                  stroke="#22c55e"
+                  strokeWidth={2}
+                  dot={{ r: 3 }}
+                  name="Target"
                 />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        )}
-
-        {availableChartTypes[kpi.id].includes('pie') && chartData.pieData && (
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <ResponsiveContainer width="100%" height={250}>
-              <PieChart>
-                <Pie
-                  data={chartData.pieData}
-                  dataKey="value"
-                  nameKey={Object.keys(chartData.pieData[0]).find(
-                    (key) => key !== "value" && key !== "count" && key !== "share"
-                  )}
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={80}
-                  fill="#8884d8"
-                  label
-                />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        )}
-      </div>
-    )
+              )}
+              <Legend />
+            </LineChart>
+          </ResponsiveContainer>
+        )
+      case "bar":
+        return (
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+              <XAxis dataKey="phase" />
+              <YAxis />
+              <Bar dataKey="value" fill="#2563eb" name="Value">
+                {data.map((_, index) => (
+                  <Cell key={`cell-${index}`} fill={`hsl(${index * 25 + 200}, 70%, 50%)`} />
+                ))}
+              </Bar>
+              {data[0]?.hasOwnProperty("target") && (
+                <Bar dataKey="target" fill="#22c55e" name="Target" />
+              )}
+              <Legend />
+            </BarChart>
+          </ResponsiveContainer>
+        )
+      case "pie":
+        return (
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={data}
+                dataKey="value"
+                nameKey="area"
+                cx="50%"
+                cy="50%"
+                innerRadius={60}
+                outerRadius={100}
+                label
+              >
+                {data.map((_, index) => (
+                  <Cell key={`cell-${index}`} fill={`hsl(${index * 45}, 70%, 50%)`} />
+                ))}
+              </Pie>
+              <Legend />
+            </PieChart>
+          </ResponsiveContainer>
+        )
+      default:
+        return null
+    }
   }
 
   return (
@@ -162,17 +218,73 @@ export function KPIDetailsModal({ kpi, isOpen, onClose }: KPIDetailsModalProps) 
             </div>
           </div>
 
-          {renderCharts()}
+          <div className="mb-8">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold">Visualization</h2>
+              <Select value={selectedChart} onValueChange={(value: ChartType) => setSelectedChart(value)}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue>
+                    <div className="flex items-center gap-2">
+                      {selectedChart === "line" && <LineChartIcon className="h-4 w-4" />}
+                      {selectedChart === "bar" && <BarChartIcon className="h-4 w-4" />}
+                      {selectedChart === "pie" && <PieChartIcon className="h-4 w-4" />}
+                      {selectedChart.charAt(0).toUpperCase() + selectedChart.slice(1)} Chart
+                    </div>
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  {availableChartTypes[kpi.id].map((type) => (
+                    <SelectItem key={type} value={type}>
+                      <div className="flex items-center gap-2">
+                        {type === "line" && <LineChartIcon className="h-4 w-4" />}
+                        {type === "bar" && <BarChartIcon className="h-4 w-4" />}
+                        {type === "pie" && <PieChartIcon className="h-4 w-4" />}
+                        {type.charAt(0).toUpperCase() + type.slice(1)} Chart
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="bg-gray-50 p-4 rounded-lg">
+              {renderChart()}
+            </div>
+          </div>
 
-          <div className="mb-6">
-            <h2 className="text-xl font-bold mb-4">Business Questions</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {kpi.keyQuestions.map((question, index) => (
-                <div key={index} className="bg-gray-50 p-4 rounded-lg">
-                  <h3 className="font-medium mb-1">Question {index + 1}</h3>
-                  <p className="text-gray-600 text-sm">{question}</p>
+          <div className="grid grid-cols-2 gap-6 mb-6">
+            <div>
+              <h2 className="text-xl font-bold mb-4">Business Questions</h2>
+              <div className="space-y-4">
+                {kpi.keyQuestions.map((question, index) => (
+                  <div key={index} className="bg-gray-50 p-4 rounded-lg">
+                    <h3 className="font-medium mb-1">Question {index + 1}</h3>
+                    <p className="text-gray-600 text-sm">{question}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-xl font-bold mb-4">Data Sources</h2>
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <p className="text-gray-600 text-sm">{kpi.dataSources}</p>
                 </div>
-              ))}
+              </div>
+              
+              <div>
+                <h2 className="text-xl font-bold mb-4">Calculation</h2>
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <p className="text-gray-600 text-sm">{kpi.calculation}</p>
+                </div>
+              </div>
+              
+              <div>
+                <h2 className="text-xl font-bold mb-4">Industry Context</h2>
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <p className="text-gray-600 text-sm">{kpi.industryContext}</p>
+                </div>
+              </div>
             </div>
           </div>
 
