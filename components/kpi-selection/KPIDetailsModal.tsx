@@ -64,7 +64,7 @@ export function KPIDetailsModal({ kpi, isOpen, onClose }: KPIDetailsModalProps) 
             <div className="w-12 h-12 bg-slate-100 rounded-md flex items-center justify-center mb-2">
               <Grid className="h-7 w-7 stroke-1 text-slate-500" />
             </div>
-            <h1 className="text-2xl font-bold mb-1">{kpi.name} <Badge variant="outline" className="align-middle bg-slate-50 hover:bg-slate-50 text-slate-700">{kpi.category}</Badge></h1>
+            <h1 className="text-2xl font-bold mb-1">{kpi.name} <Badge variant="outline" className="text-[10px] align-middle bg-slate-50 hover:bg-slate-50 text-slate-700">{kpi.category}</Badge></h1>
             <p className="text-slate-700 text-xs text-center max-w-[500px]">{kpi.calculation}</p>
           </div>
 
@@ -74,7 +74,7 @@ export function KPIDetailsModal({ kpi, isOpen, onClose }: KPIDetailsModalProps) 
 
           <div className="flex flex-wrap justify-center gap-2 mb-10 rounded-md">
             {kpi.dataSources.map((source, index) => (
-              <Badge key={index} variant="outline" className=" align-middle bg-slate-50 hover:bg-slate-50 text-slate-700">
+              <Badge key={index} variant="outline" className="align-middle bg-slate-50 hover:bg-slate-50 text-slate-700">
                 #{source.toLowerCase().replace(/\s+/g, '-')}
               </Badge>
             ))}
@@ -146,10 +146,10 @@ export function KPIDetailsModal({ kpi, isOpen, onClose }: KPIDetailsModalProps) 
             </div>
           </div>
 
-          <div className="gap-4 mb-3">
+          <div className="gap-4 mb-4">
             <div>
               <h2 className="text-lg ml-2 font-bold">Business Questions</h2>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2">
                 {kpi.keyQuestions.map((question, index) => (
                   <div key={index} className="p-3 rounded-lg hover:bg-slate-100">
                     <h3 className="font-semibold mb-1 text-sm">Question {index + 1}</h3>
