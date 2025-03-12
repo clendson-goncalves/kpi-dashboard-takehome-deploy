@@ -139,6 +139,7 @@ export function renderChart(kpiId: string, chartType: string, height: number = 3
 }
 
 export function ChartVisualization() {
+  const { kpis } = useKpiStore()
 
   return (
     <div className="grid grid-cols-4 gap-4">
