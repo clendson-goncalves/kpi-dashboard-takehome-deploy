@@ -61,11 +61,11 @@ export function KPIDetailsModal({ kpi, isOpen, onClose }: KPIDetailsModalProps) 
         </div>
         <div className="px-4">
           <div className="flex flex-col items-center mb-6">
-            <div className="w-12 h-12 bg-gray-100 rounded-md flex items-center justify-center mb-3">
-              <Grid className="h-7 w-7 stroke-1 text-gray-500" />
+            <div className="w-12 h-12 bg-slate-100 rounded-md flex items-center justify-center mb-2">
+              <Grid className="h-7 w-7 stroke-1 text-slate-500" />
             </div>
-            <h1 className="text-2xl font-bold mb-1">{kpi.name} <Badge variant="outline" className="align-middle bg-gray-50 hover:bg-gray-50 text-gray-700">{kpi.category}</Badge></h1>
-            <p className="text-gray-700 text-xs text-center max-w-[500px]">{kpi.calculation}</p>
+            <h1 className="text-2xl font-bold mb-1">{kpi.name} <Badge variant="outline" className="align-middle bg-slate-50 hover:bg-slate-50 text-slate-700">{kpi.category}</Badge></h1>
+            <p className="text-slate-700 text-xs text-center max-w-[500px]">{kpi.calculation}</p>
           </div>
 
           <div className="flex flex-wrap justify-center gap-2 mb-3 rounded-md">
@@ -74,39 +74,39 @@ export function KPIDetailsModal({ kpi, isOpen, onClose }: KPIDetailsModalProps) 
 
           <div className="flex flex-wrap justify-center gap-2 mb-10 rounded-md">
             {kpi.dataSources.map((source, index) => (
-              <Badge key={index} variant="outline" className=" align-middle bg-gray-50 hover:bg-gray-50 text-gray-700">
+              <Badge key={index} variant="outline" className=" align-middle bg-slate-50 hover:bg-slate-50 text-slate-700">
                 #{source.toLowerCase().replace(/\s+/g, '-')}
               </Badge>
             ))}
           </div>
 
-          <div className="grid grid-cols-4 gap-2 mb-3 text-center divide-x divide-gray-300">
+          <div className="grid grid-cols-4 gap-2 mb-2 text-center divide-x divide-slate-300">
             <div>
               <p className="font-bold text-base">2485</p>
-              <div className="flex items-center justify-center gap-1 text-gray-500 text-xs">
+              <div className="flex items-center justify-center gap-1 text-slate-500 text-xs">
                 Used
                 <Info className="h-3 w-3" />
               </div>
             </div>
             <div>
               <p className="font-bold text-base">{kpi.accessLevel}</p>
-              <p className="text-gray-500 text-xs">Access Level</p>
+              <p className="text-slate-500 text-xs">Access Level</p>
             </div>
             <div>
               <p className="font-bold text-base">{kpi.target}</p>
-              <div className="flex items-center justify-center gap-1 text-gray-500 text-xs">
+              <div className="flex items-center justify-center gap-1 text-slate-500 text-xs">
                 Target No.
                 <Info className="h-3 w-3" />
               </div>
             </div>
             <div>
               <p className="font-bold text-base">07/23/2024</p>
-              <p className="text-gray-500 text-xs">Last Updated</p>
+              <p className="text-slate-500 text-xs">Last Updated</p>
             </div>
           </div>
 
-          <div className="mb-4">
-            <div className="flex items-center justify-end mb-3">
+          <div className="mb-3">
+            <div className="flex items-center justify-end mb-2">
               <Select
                 defaultValue={selectedChart}
                 onValueChange={(value) => {
@@ -138,22 +138,22 @@ export function KPIDetailsModal({ kpi, isOpen, onClose }: KPIDetailsModalProps) 
               </Select>
             </div>
 
-            <div className="flex justify-center bg-gray-50 p-3 rounded-lg w-full h-[210px]">
+            <div className="flex justify-center bg-slate-50 p-3 rounded-lg w-full h-[205px]">
               {data.length ?
                 (renderChart(kpi.id, selectedChart, 250)) : (
-                  <div className="bg-gray-100 rounded-lg" />
+                  <div className="bg-slate-100 rounded-lg" />
                 )}
             </div>
           </div>
 
-          <div className="gap-4 mb-2">
+          <div className="gap-4 mb-3">
             <div>
-              <h2 className="text-lg ml-2 font-bold mb-1">Business Questions</h2>
-              <div className="grid grid-cols-2 gap-2">
+              <h2 className="text-lg ml-2 font-bold">Business Questions</h2>
+              <div className="grid grid-cols-2 gap-3">
                 {kpi.keyQuestions.map((question, index) => (
-                  <div key={index} className="bg-gray-50 p-2 rounded-lg">
+                  <div key={index} className="p-3 rounded-lg hover:bg-slate-100">
                     <h3 className="font-semibold mb-1 text-sm">Question {index + 1}</h3>
-                    <p className="text-gray-600 text-xs">{question}</p>
+                    <p className="text-slate-600 text-xs">{question}</p>
                   </div>
                 ))}
               </div>

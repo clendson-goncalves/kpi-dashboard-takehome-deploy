@@ -27,10 +27,6 @@ export function ChartSelector() {
         return <LineChart className="h-5 w-5" />
       case "pie":
         return <PieChart className="h-5 w-5" />
-      case "area":
-        return <AreaChart className="h-5 w-5" />
-      case "radar":
-        return <RadarChart className="h-5 w-5" />
       default:
         return null
     }

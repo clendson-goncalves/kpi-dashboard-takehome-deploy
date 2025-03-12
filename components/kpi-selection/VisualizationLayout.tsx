@@ -50,7 +50,7 @@ export function VisualizationLayout({ onSave }: VisualizationLayoutProps) {
         <div className="bg-white p-4 rounded-lg border">
           <h2 className="text-lg font-semibold mb-4">Available KPIs</h2>
           <div className="relative mb-4">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
             <Input
               placeholder="Search KPIs..."
               value={searchQuery}
@@ -89,7 +89,7 @@ export function VisualizationLayout({ onSave }: VisualizationLayoutProps) {
               </Button>
             </div>
           </div>
-          <div className="min-h-[600px] bg-gray-50 rounded-lg p-4">
+          <div className="min-h-[600px] bg-slate-50 rounded-lg p-4">
             <ChartVisualization />
           </div>
         </div>
