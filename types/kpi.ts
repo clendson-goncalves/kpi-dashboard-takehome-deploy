@@ -2,7 +2,7 @@
 export type AccessLevel = "public" | "restricted"
 
 // Chart types supported by our dashboard
-export type ChartType = "bar" | "line" | "pie" | "area" | "radar"
+export type ChartType = "bar" | "line" | "pie" 
 
 // Chart data points
 export interface LineDataPoint {
@@ -34,18 +34,13 @@ export interface PieDataPoint {
   share?: number
 }
 
-export interface RadarDataPoint {
-  metric: string
-  value: number
-  fullMark: number
-}
+
 
 // Chart data structure
 export interface ChartData {
   lineData?: LineDataPoint[]
   barData?: BarDataPoint[]
   pieData?: PieDataPoint[]
-  radarData?: RadarDataPoint[]
 }
 
 // KPI data structure

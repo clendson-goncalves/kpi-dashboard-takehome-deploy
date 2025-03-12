@@ -2,32 +2,12 @@
 
 import { useState } from "react"
 import type { KPI, ChartType } from "@/types/kpi"
-import { X, Link2, Grid, Info, BarChart as BarChartIcon, LineChart as LineChartIcon, PieChart as PieChartIcon } from "lucide-react"
+import { Bookmark, X, Link2, Grid, Info, BarChart as BarChartIcon, LineChart as LineChartIcon, PieChart as PieChartIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { mockChartData, availableChartTypes } from "@/data/mockData"
-import {
-  Bar,
-  BarChart,
-  Line,
-  LineChart,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Legend,
-  Tooltip,
-  Cell
-} from "recharts"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { renderChart } from "@/components/chart-visualization/ChartVisualization"
 
 interface KPIDetailsModalProps {
   kpi: KPI
@@ -41,17 +21,6 @@ type ChartData = {
   pieData?: { [key: string]: string | number }[]
 }
 
-type QuarterlyData = {
-  quarter: string
-  value: number
-  target: number
-}
-
-type PieChartData = {
-  name: string
-  value: number
-}
-
 export function KPIDetailsModal({ kpi, isOpen, onClose }: KPIDetailsModalProps) {
   const [selectedChart, setSelectedChart] = useState<ChartType>(availableChartTypes[kpi.id][0])
 
@@ -60,7 +29,9 @@ export function KPIDetailsModal({ kpi, isOpen, onClose }: KPIDetailsModalProps) 
   const chartData = mockChartData[kpi.id as keyof typeof mockChartData] as ChartData
 
   const getChartData = () => {
-    switch (selectedChart) {
+    console.log('Selected Chart Type:', selectedChart);
+    console.log('Chart Data:', chartData);
+    switch (selectedChart.toLowerCase()) {
       case "line":
         return chartData.lineData || []
       case "bar":
@@ -73,91 +44,13 @@ export function KPIDetailsModal({ kpi, isOpen, onClose }: KPIDetailsModalProps) 
   }
 
   const data = getChartData()
-
-  const renderChart = () => {
-    if (!data.length) return <div className="bg-gray-100 h-64 rounded-lg" />
-
-    switch (selectedChart) {
-      case "line":
-        return (
-          <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-              <XAxis dataKey="year" />
-              <YAxis />
-              <Line
-                type="monotone"
-                dataKey="value"
-                stroke="#2563eb"
-                strokeWidth={2}
-                dot={{ r: 3 }}
-                name="Value"
-              />
-              {data[0]?.hasOwnProperty("target") && (
-                <Line
-                  type="monotone"
-                  dataKey="target"
-                  stroke="#22c55e"
-                  strokeWidth={2}
-                  dot={{ r: 3 }}
-                  name="Target"
-                />
-              )}
-              <Legend />
-            </LineChart>
-          </ResponsiveContainer>
-        )
-      case "bar":
-        return (
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-              <XAxis dataKey="phase" />
-              <YAxis />
-              <Bar dataKey="value" fill="#2563eb" name="Value">
-                {data.map((_, index) => (
-                  <Cell key={`cell-${index}`} fill={`hsl(${index * 25 + 200}, 70%, 50%)`} />
-                ))}
-              </Bar>
-              {data[0]?.hasOwnProperty("target") && (
-                <Bar dataKey="target" fill="#22c55e" name="Target" />
-              )}
-              <Legend />
-            </BarChart>
-          </ResponsiveContainer>
-        )
-      case "pie":
-        return (
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={data}
-                dataKey="value"
-                nameKey="area"
-                cx="50%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={100}
-                label
-              >
-                {data.map((_, index) => (
-                  <Cell key={`cell-${index}`} fill={`hsl(${index * 45}, 70%, 50%)`} />
-                ))}
-              </Pie>
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
-        )
-      default:
-        return null
-    }
-  }
+  console.log('Processed Data:', data);
 
   return (
     <div className="fixed inset-0 bg-black/20 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] overflow-auto">
-        <div className="flex justify-end items-center p-4">
-          <div className="flex space-x-2">
+      <div className="bg-white rounded-lg w-full max-w-2xl max-h-[95vh] overflow-auto p-4">
+        <div className="flex justify-end items-center">
+          <div>
             <Button variant="ghost" size="icon">
               <Link2 className="h-5 w-5" />
             </Button>
@@ -166,33 +59,28 @@ export function KPIDetailsModal({ kpi, isOpen, onClose }: KPIDetailsModalProps) 
             </Button>
           </div>
         </div>
-
-        <div className="p-4">
-          <div className="flex flex-col items-center mb-4">
+        <div className="px-4">
+          <div className="flex flex-col items-center mb-6">
             <div className="w-12 h-12 bg-gray-100 rounded-md flex items-center justify-center mb-3">
-              <Grid className="h-6 w-6 text-gray-500" />
+              <Grid className="h-7 w-7 stroke-1 text-gray-500" />
             </div>
-            <h1 className="text-2xl font-bold mb-1">{kpi.name} <Badge variant="outline" className="align-middle bg-gray-100 hover:bg-gray-50 text-gray-700">{kpi.category}</Badge></h1>
-            <p className="text-gray-500 text-xs">{kpi.description}</p>
+            <h1 className="text-2xl font-bold mb-1">{kpi.name} <Badge variant="outline" className="align-middle bg-gray-50 hover:bg-gray-50 text-gray-700">{kpi.category}</Badge></h1>
+            <p className="text-gray-700 text-xs text-center max-w-[500px]">{kpi.calculation}</p>
           </div>
 
-          <p className="text-center mb-4 max-w-96 mx-auto text-sm">
-            {kpi.calculation}
-          </p>
-
-          <div className="flex justify-center gap-2 mb-4">
-            <Badge variant="outline" className="bg-gray-50 hover:bg-gray-50 text-gray-700 text-xs">
-              #{kpi.category.toLowerCase()}
-            </Badge> 
-            <Badge variant="outline" className="bg-gray-50 hover:bg-gray-50 text-gray-700 text-xs">
-              #{kpi.accessLevel}
-            </Badge>
-            <Badge variant="outline" className="bg-gray-50 hover:bg-gray-50 text-gray-700 text-xs">
-              #metrics
-            </Badge>
+          <div className="flex flex-wrap justify-center gap-2 mb-3 rounded-md">
+            <p className="text-slate-900 text-sm text-center max-w-[500px]">{kpi.industryContext}</p>
           </div>
 
-          <div className="grid grid-cols-4 gap-4 mb-4 text-center divide-x divide-gray-300">
+          <div className="flex flex-wrap justify-center gap-2 mb-10 rounded-md">
+            {kpi.dataSources.map((source, index) => (
+              <Badge key={index} variant="outline" className=" align-middle bg-gray-50 hover:bg-gray-50 text-gray-700">
+                #{source.toLowerCase().replace(/\s+/g, '-')}
+              </Badge>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-4 gap-2 mb-3 text-center divide-x divide-gray-300">
             <div>
               <p className="font-bold text-base">2485</p>
               <div className="flex items-center justify-center gap-1 text-gray-500 text-xs">
@@ -217,16 +105,21 @@ export function KPIDetailsModal({ kpi, isOpen, onClose }: KPIDetailsModalProps) 
             </div>
           </div>
 
-          <div className="mb-6">
-            <div className="flex items-center justify-end mb-4">
-              <Select value={selectedChart} onValueChange={(value: ChartType) => setSelectedChart(value)}>
+          <div className="mb-4">
+            <div className="flex items-center justify-end mb-3">
+              <Select
+                defaultValue={selectedChart}
+                onValueChange={(value) => {
+                  setSelectedChart(value as ChartType);
+                }}
+              >
                 <SelectTrigger className="w-[140px]">
                   <SelectValue>
                     <div className="flex items-center gap-2">
                       {selectedChart === "line" && <LineChartIcon className="h-4 w-4" />}
                       {selectedChart === "bar" && <BarChartIcon className="h-4 w-4" />}
                       {selectedChart === "pie" && <PieChartIcon className="h-4 w-4" />}
-                      {selectedChart.charAt(0).toUpperCase() + selectedChart.slice(1)} Chart
+                      {selectedChart.charAt(0).toLowerCase() + selectedChart.slice(1)} Chart
                     </div>
                   </SelectValue>
                 </SelectTrigger>
@@ -237,56 +130,37 @@ export function KPIDetailsModal({ kpi, isOpen, onClose }: KPIDetailsModalProps) 
                         {type === "line" && <LineChartIcon className="h-4 w-4" />}
                         {type === "bar" && <BarChartIcon className="h-4 w-4" />}
                         {type === "pie" && <PieChartIcon className="h-4 w-4" />}
-                        {type.charAt(0).toUpperCase() + type.slice(1)} Chart
+                        {type.charAt(0).toLowerCase() + type.slice(1)} Chart
                       </div>
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-            <div className="bg-gray-50 p-3 rounded-lg">
-              {renderChart()}
+
+            <div className="flex justify-center bg-gray-50 p-3 rounded-lg w-full h-[210px]">
+              {data.length ?
+                (renderChart(kpi.id, selectedChart, 250)) : (
+                  <div className="bg-gray-100 rounded-lg" />
+                )}
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 mb-6">
+          <div className="gap-4 mb-2">
             <div>
-              <h2 className="text-lg font-bold mb-3">Business Questions</h2>
-              <div className="space-y-3">
+              <h2 className="text-lg ml-2 font-bold mb-1">Business Questions</h2>
+              <div className="grid grid-cols-2 gap-2">
                 {kpi.keyQuestions.map((question, index) => (
                   <div key={index} className="bg-gray-50 p-2 rounded-lg">
-                    <h3 className="font-medium mb-1 text-sm">Question {index + 1}</h3>
+                    <h3 className="font-semibold mb-1 text-sm">Question {index + 1}</h3>
                     <p className="text-gray-600 text-xs">{question}</p>
                   </div>
                 ))}
               </div>
             </div>
-
-            <div className="space-y-3">
-              <div>
-                <h2 className="text-lg font-bold mb-2">Data Sources</h2>
-                <div className="bg-gray-50 p-2 rounded-lg">
-                  <p className="text-gray-600 text-xs">{kpi.dataSources}</p>
-                </div>
-              </div>
-
-              <div>
-                <h2 className="text-lg font-bold mb-2">Calculation</h2>
-                <div className="bg-gray-50 p-2 rounded-lg">
-                  <p className="text-gray-600 text-xs">{kpi.calculation}</p>
-                </div>
-              </div>
-
-              <div>
-                <h2 className="text-lg font-bold mb-2">Industry Context</h2>
-                <div className="bg-gray-50 p-2 rounded-lg">
-                  <p className="text-gray-600 text-xs">{kpi.industryContext}</p>
-                </div>
-              </div>
-            </div>
           </div>
-
-          <Button className="w-full bg-slate-900 hover:bg-slate-800 text-sm">Favorite item</Button>
+          <Button className="w-full bg-slate-900 hover:bg-slate-800 text-sm">
+            <Bookmark className="h-5 w-5" />Favorite item</Button>
         </div>
       </div>
     </div>

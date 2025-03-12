@@ -4,11 +4,7 @@ import { useKpiStore } from "@/store/kpiStore"
 import { useVisualizationStore } from "@/store/visualizationStore"
 import { mockChartData } from "@/data/mockData"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { X, MessageSquarePlus, GripVertical } from "lucide-react"
 import { useState } from "react"
-import { Input } from "@/components/ui/input"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import {
   Bar,
   BarChart,
@@ -16,19 +12,134 @@ import {
   LineChart,
   Pie,
   PieChart,
-  PolarAngleAxis,
-  PolarGrid,
-  PolarRadiusAxis,
-  Radar,
-  RadarChart,
   ResponsiveContainer,
   XAxis,
   YAxis,
   CartesianGrid,
   Legend,
   Tooltip,
+  Cell,
 } from "recharts"
-import type { KPIVisualization, ChartData, BarDataPoint, LineDataPoint, PieDataPoint, RadarDataPoint } from "@/types/kpi"
+import type { ChartData } from "@/types/kpi"
+
+type ChartDataType = {
+  lineData?: Record<string, string | number>[];
+  barData?: Record<string, string | number>[];
+  pieData?: { name: string; value: number; }[];
+}
+
+// Extract renderChart as a standalone function
+export function renderChart(kpiId: string, chartType: string, height: number = 300) {
+  
+  const chartData = mockChartData[kpiId as keyof typeof mockChartData] as ChartDataType
+
+  const colors = ["#091E42", "#0057B8", "#63AEE8", "#5B2C6F", "#B0BEC5"];
+
+  if (!chartData) return null
+
+  const getChartData = () => {
+    switch (chartType.toLowerCase()) {
+      case "line":
+        return chartData.lineData || []
+      case "bar":
+        return chartData.barData || []
+      case "pie":
+        return chartData.pieData || []
+      default:
+        console.log('No matching chart type:', chartType);
+        return []
+    }
+  }
+
+  const data = getChartData()
+
+  if (!data.length) return null
+
+  const commonProps = {
+    height: height,
+    width: '100%',
+  }
+
+  switch (chartType) {
+    case "bar":
+      return (
+        <ResponsiveContainer {...commonProps}>
+          <BarChart data={data}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+            <XAxis dataKey="quarter"  domain={[0, 'auto']} tick={{ fontSize: 10 }} />
+            <YAxis tick={{ fontSize: 10 }} width={10}/>
+            <Tooltip contentStyle={{ fontSize: 12 }}/>
+            <Legend verticalAlign="bottom" height={80} wrapperStyle={{ fontSize: 12 }}/>
+            {Object.keys(data[0])
+              .filter(key => key !== 'quarter')
+              .map((key, lineIndex) => (
+                <Bar
+                  key={key}
+                  dataKey={key}
+                  fill={colors[lineIndex]}
+                  name={key.charAt(0).toUpperCase() + key.slice(1)}
+                />
+              ))}
+          </BarChart>
+        </ResponsiveContainer>
+      )
+
+    case "line":
+      return (
+        <ResponsiveContainer {...commonProps}>
+          <LineChart data={data}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#eee"/>
+            <XAxis dataKey="quarter" tick={{ fontSize: 10 }}/>
+            <YAxis tick={{ fontSize: 10 }} domain={[0, 'auto']} width={10}/>
+            <Tooltip contentStyle={{ fontSize: 12 }}/>
+            <Legend verticalAlign="bottom" height={80} wrapperStyle={{ fontSize: 12 }}/>
+            {Object.keys(data[0])
+              .filter(key => key !== 'quarter')
+              .map((key, lineIndex) => (
+                <Line
+                  key={key}
+                  type="monotone"
+                  dataKey={key}
+                  stroke={colors[lineIndex]}
+                  strokeWidth={2}
+                  dot={{ r: 3, fill: '#eee'}}
+                  name={key.charAt(0).toUpperCase() + key.slice(1)}
+                />
+              ))}
+          </LineChart>
+        </ResponsiveContainer>
+      )
+
+    case "pie":
+      return (
+        <ResponsiveContainer {...commonProps}>
+          <PieChart >
+            <Tooltip contentStyle={{ fontSize: 12 }}/>
+            <Legend verticalAlign="bottom" height={80} wrapperStyle={{ fontSize: 10 }}/>
+            <Pie
+              data={data}
+              dataKey="value"
+              nameKey="name"
+              cx="50%"
+              cy="50%"
+              outerRadius={60}
+              label fontSize={10}
+            >
+              {data.map((entry, index) => (
+                <Cell
+                  key={index}
+                  fill={colors[index % colors.length]}
+                />
+              ))}
+            </Pie>
+          </PieChart>
+        </ResponsiveContainer>
+      )
+
+    default:
+      return null
+  }
+}
 
 export function ChartVisualization() {
   const { kpis } = useKpiStore()
@@ -45,96 +156,6 @@ export function ChartVisualization() {
     }
   }
 
-  const renderChart = (kpiId: string, chartType: string) => {
-    const chartData = mockChartData[kpiId as keyof typeof mockChartData] as ChartData
-    if (!chartData) return null
-
-    switch (chartType) {
-      case "bar":
-        const barData = chartData.barData as BarDataPoint[]
-        if (!barData) return null
-        return (
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={barData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey={Object.keys(barData[0]).find((key) => key !== "value")} />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="value" fill="#8884d8" />
-            </BarChart>
-          </ResponsiveContainer>
-        )
-
-      case "line":
-        const lineData = chartData.lineData as LineDataPoint[]
-        if (!lineData) return null
-        return (
-          <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={lineData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                dataKey={Object.keys(lineData[0]).find(
-                  (key) => key !== "value" && key !== "success" && key !== "efficiency",
-                )}
-              />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey={Object.keys(lineData[0]).find(
-                  (key) => key === "value" || key === "success" || key === "efficiency" || key === "share",
-                )}
-                stroke="#8884d8"
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        )
-
-      case "pie":
-        const pieData = chartData.pieData as PieDataPoint[]
-        if (!pieData) return null
-        return (
-          <ResponsiveContainer width="100%" height={250}>
-            <PieChart>
-              <Pie
-                data={pieData}
-                dataKey="value"
-                nameKey={Object.keys(pieData[0]).find((key) => key !== "value" && key !== "count" && key !== "share")}
-                cx="50%"
-                cy="50%"
-                outerRadius={80}
-                fill="#8884d8"
-                label
-              />
-              <Tooltip />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
-        )
-
-      case "radar":
-        const radarData = chartData.radarData as RadarDataPoint[]
-        if (!radarData) return null
-        return (
-          <ResponsiveContainer width="100%" height={250}>
-            <RadarChart cx="50%" cy="50%" outerRadius={80} data={radarData}>
-              <PolarGrid />
-              <PolarAngleAxis dataKey="metric" />
-              <PolarRadiusAxis />
-              <Radar name="Value" dataKey="value" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
-              <Tooltip />
-              <Legend />
-            </RadarChart>
-          </ResponsiveContainer>
-        )
-
-      default:
-        return null
-    }
-  }
-
   if (currentLayout.visualizations.length === 0) {
     return (
       <div className="p-8 border rounded-md bg-muted/50 text-center">
@@ -146,71 +167,27 @@ export function ChartVisualization() {
   }
 
   return (
-    <div className="grid grid-cols-2 gap-4">
-      {currentLayout.visualizations.map((visualization: KPIVisualization) => {
-        const kpi = kpis.find((k) => k.id === visualization.kpiId)
+    <div className="grid grid-cols-4 gap-4">
+      {["revenue-growth", "rd-pipeline", "market-share", "operational-efficiency"].map((kpiId) => {
+        const kpi = kpis.find((k) => k.id === kpiId)
         if (!kpi) return null
 
         return (
-          <Card key={visualization.kpiId} className="relative group">
-            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => {
-                  setAnnotatingKpiId(visualization.kpiId)
-                  setDialogOpen(true)
-                }}
-              >
-                <MessageSquarePlus className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => removeFromLayout(visualization.kpiId)}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-            <div className="absolute top-1/2 left-2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity cursor-move">
-              <GripVertical className="h-4 w-4 text-muted-foreground" />
-            </div>
-            <CardHeader>
-              <CardTitle className="text-lg">{kpi.name}</CardTitle>
-              <CardDescription>{kpi.description}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {renderChart(visualization.kpiId, visualization.chartConfig.type)}
-              {annotations[visualization.kpiId]?.map((annotation, index) => (
-                <div key={index} className="mt-2 p-2 bg-muted rounded-md text-sm">
-                  {annotation}
+          <Card key={kpiId} className="relative">
+            <CardHeader className="p-4 pb-2">
+              <div className="flex items-start justify-between">
+                <div>
+                  <CardTitle className="text-sm font-medium">{kpi.name}</CardTitle>
+                  <CardDescription className="text-xs">{kpi.description}</CardDescription>
                 </div>
-              ))}
+              </div>
+            </CardHeader>
+            <CardContent className="p-4 pt-0">
+              {renderChart(kpiId, "line")}
             </CardContent>
           </Card>
         )
       })}
-
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add Annotation</DialogTitle>
-          </DialogHeader>
-          <div className="py-4">
-            <Input
-              placeholder="Enter your annotation..."
-              value={annotationText}
-              onChange={(e) => setAnnotationText(e.target.value)}
-            />
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleAddAnnotation}>Add</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }

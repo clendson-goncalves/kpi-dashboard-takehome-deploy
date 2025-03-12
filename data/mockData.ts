@@ -19,11 +19,10 @@ export const kpiData: KPI[] = [
       "Financial reporting systems",
       "ERP data",
       "Sales data by region and product",
-      "Market analysis reports",
     ],
-    calculation: "((Current Period Revenue - Previous Period Revenue) / Previous Period Revenue) × 100",
+    calculation: "((Current Period Revenue - Previous Period Revenue) / Previous Period Revenue) × 100.",
     industryContext:
-      "For large global pharmaceutical companies, healthy growth is typically 4-7% annually, with top performers reaching 8-10%",
+      "For large global pharmaceutical companies, healthy growth is typically 4-7% annually, with top performers reaching 8-10%.",
     hasAccess: true,
   },
   {
@@ -43,11 +42,10 @@ export const kpiData: KPI[] = [
       "R&D management systems",
       "Clinical trial databases",
       "Regulatory submission tracking",
-      "Project management tools",
     ],
-    calculation: "Number of products in pipeline and percentage of milestones completed across all development phases",
+    calculation: "Products in pipeline and percentage of milestones completed across all phases.",
     industryContext:
-      "Average industry success rates: Phase I to II (66%), Phase II to III (30%), Phase III to Approval (59%)",
+      "Average industry success rates: Phase I to II (66%), Phase II to III (30%), Phase III to Approval (59%).",
     hasAccess: true,
   },
   {
@@ -64,15 +62,13 @@ export const kpiData: KPI[] = [
       "What is the impact of new product launches on market position?",
     ],
     dataSources: [
-      "IQVIA data",
       "Prescription databases",
       "Market research reports",
-      "Competitive intelligence",
       "Sales data",
     ],
-    calculation: "(Company Sales in Market / Total Market Sales) × 100, analyzed by therapeutic area and geography",
+    calculation: "(Company Sales in Market / Total Market Sales) × 100. Therapeutic area and geography.",
     industryContext:
-      "For established therapeutic areas, maintaining share is critical; for emerging areas, growth rates of 1-3% quarterly indicate strong performance",
+      "For established therapeutic areas, maintaining share is critical; for emerging areas, growth rates of 1-3% quarterly indicate strong performance.",
     hasAccess: true,
   },
   {
@@ -89,15 +85,14 @@ export const kpiData: KPI[] = [
       "What is our quality compliance rate across facilities?",
     ],
     dataSources: [
-      "Manufacturing execution systems",
-      "Supply chain management systems",
-      "Quality management systems",
-      "ERP data",
+      "Manufacturing execution",
+      "Supply chain management",
+      "Quality management",
     ],
     calculation:
-      "Composite score including manufacturing yield, on-time delivery rate, quality compliance, and cost efficiency metrics",
+      "Manufacturing yield, on-time delivery rate, quality compliance, and cost efficiency.",
     industryContext:
-      "Top pharmaceutical manufacturers maintain efficiency rates of 85-95%, with leaders focusing on continuous improvement methodologies",
+      "Top pharmaceutical manufacturers maintain efficiency rates of 85-95%, with leaders focusing on continuous improvement methodologies.",
     hasAccess: false,
   },
 ]
@@ -106,117 +101,92 @@ export const kpiData: KPI[] = [
 export const mockChartData = {
   "revenue-growth": {
     lineData: [
-      { month: "Jan", value: 4.2 },
-      { month: "Feb", value: 4.5 },
-      { month: "Mar", value: 5.1 },
-      { month: "Apr", value: 5.3 },
-      { month: "May", value: 6.2 },
-      { month: "Jun", value: 6.5 },
-      { month: "Jul", value: 7.1 },
-      { month: "Aug", value: 7.3 },
-      { month: "Sep", value: 8.2 },
-      { month: "Oct", value: 8.5 },
-      { month: "Nov", value: 9.1 },
-      { month: "Dec", value: 9.3 },
+      { quarter: "Q1", revenue: 7.5, target: 7.2 },
+      { quarter: "Q2", revenue: 8.4, target: 8.1 },
+      { quarter: "Q3", revenue: 8.9, target: 8.5 },
+      { quarter: "Q4", revenue: 9.2, target: 8.8 }
     ],
     barData: [
-      { area: "Oncology", value: 8.7 },
-      { area: "Cardiology", value: 6.2 },
-      { area: "Neurology", value: 4.5 },
-      { area: "Immunology", value: 9.1 },
-      { area: "Infectious Disease", value: 3.8 },
+      { quarter: "Q1", revenue: 7.5, target: 7.2 },
+      { quarter: "Q2", revenue: 8.4, target: 8.1 },
+      { quarter: "Q3", revenue: 8.9, target: 8.5 },
+      { quarter: "Q4", revenue: 9.2, target: 8.8 }
     ],
     pieData: [
-      { region: "North America", value: 45 },
-      { region: "Europe", value: 30 },
-      { region: "Asia", value: 15 },
-      { region: "Rest of World", value: 10 },
-    ],
+      { name: "Oncology", value: 35 },
+      { name: "Immunology", value: 25 },
+      { name: "Neurology", value: 20 },
+      { name: "Cardiology", value: 15 },
+      { name: "Other", value: 5 }
+    ]
   },
   "rd-pipeline": {
-    barData: [
-      { phase: "Discovery", count: 32 },
-      { phase: "Preclinical", count: 24 },
-      { phase: "Phase I", count: 16 },
-      { phase: "Phase II", count: 8 },
-      { phase: "Phase III", count: 4 },
-      { phase: "Regulatory Review", count: 2 },
-    ],
     lineData: [
-      { year: "2018", success: 62 },
-      { year: "2019", success: 64 },
-      { year: "2020", success: 67 },
-      { year: "2021", success: 69 },
-      { year: "2022", success: 72 },
-      { year: "2023", success: 75 },
+      { quarter: "Q1", phaseI: 15, phaseII: 12, phaseIII: 8, approval: 4 },
+      { quarter: "Q2", phaseI: 16, phaseII: 13, phaseIII: 9, approval: 5 },
+      { quarter: "Q3", phaseI: 17, phaseII: 14, phaseIII: 9, approval: 6 },
+      { quarter: "Q4", phaseI: 18, phaseII: 15, phaseIII: 10, approval: 7 }
+    ],
+    barData: [
+      { quarter: "Q1", phaseI: 15, phaseII: 12, phaseIII: 8, approval: 4 },
+      { quarter: "Q2", phaseI: 16, phaseII: 13, phaseIII: 9, approval: 5 },
+      { quarter: "Q3", phaseI: 17, phaseII: 14, phaseIII: 9, approval: 6 },
+      { quarter: "Q4", phaseI: 18, phaseII: 15, phaseIII: 10, approval: 7 }
     ],
     pieData: [
-      { area: "Oncology", count: 18 },
-      { area: "Cardiology", count: 12 },
-      { area: "Neurology", count: 15 },
-      { area: "Immunology", count: 22 },
-      { area: "Infectious Disease", count: 19 },
-    ],
+      { name: "Phase I", value: 36 },
+      { name: "Phase II", value: 30 },
+      { name: "Phase III", value: 20 },
+      { name: "Approval", value: 14 }
+    ]
   },
   "market-share": {
     lineData: [
-      { quarter: "Q1 2022", share: 24.5 },
-      { quarter: "Q2 2022", share: 25.1 },
-      { quarter: "Q3 2022", share: 25.8 },
-      { quarter: "Q4 2022", share: 26.2 },
-      { quarter: "Q1 2023", share: 26.9 },
-      { quarter: "Q2 2023", share: 27.5 },
-      { quarter: "Q3 2023", share: 28.1 },
-      { quarter: "Q4 2023", share: 28.7 },
+      { quarter: "Q1", share: 25, target: 27 },
+      { quarter: "Q2", share: 26, target: 27 },
+      { quarter: "Q3", share: 27, target: 27 },
+      { quarter: "Q4", share: 28, target: 27 }
     ],
     barData: [
-      { region: "North America", share: 32.5 },
-      { region: "Europe", share: 28.7 },
-      { region: "Asia Pacific", share: 22.3 },
-      { region: "Latin America", share: 18.9 },
-      { region: "Middle East & Africa", share: 15.2 },
+      { quarter: "Q1", share: 25, target: 27 },
+      { quarter: "Q2", share: 26, target: 27 },
+      { quarter: "Q3", share: 27, target: 27 },
+      { quarter: "Q4", share: 28, target: 27 }
     ],
     pieData: [
-      { competitor: "Our Company", share: 28.7 },
-      { competitor: "Competitor A", share: 22.3 },
-      { competitor: "Competitor B", share: 18.9 },
-      { competitor: "Competitor C", share: 15.2 },
-      { competitor: "Others", share: 14.9 },
-    ],
+      { name: "Our Share", value: 28 },
+      { name: "Competitor A", value: 25 },
+      { name: "Competitor B", value: 22 },
+      { name: "Others", value: 25 }
+    ]
   },
   "operational-efficiency": {
-    barData: [
-      { metric: "Manufacturing Yield", value: 92.5 },
-      { metric: "On-time Delivery", value: 94.8 },
-      { metric: "Quality Compliance", value: 97.2 },
-      { metric: "Cost Efficiency", value: 89.3 },
-    ],
     lineData: [
-      { quarter: "Q1 2022", efficiency: 87.5 },
-      { quarter: "Q2 2022", efficiency: 88.2 },
-      { quarter: "Q3 2022", efficiency: 89.8 },
-      { quarter: "Q4 2022", efficiency: 90.5 },
-      { quarter: "Q1 2023", efficiency: 91.2 },
-      { quarter: "Q2 2023", efficiency: 92.8 },
-      { quarter: "Q3 2023", efficiency: 93.5 },
-      { quarter: "Q4 2023", efficiency: 94.2 },
+      { quarter: "Q1", manufacturing: 92, distribution: 94, quality: 96 },
+      { quarter: "Q2", manufacturing: 93, distribution: 95, quality: 97 },
+      { quarter: "Q3", manufacturing: 94, distribution: 96, quality: 98 },
+      { quarter: "Q4", manufacturing: 95, distribution: 97, quality: 99 }
     ],
-    radarData: [
-      { metric: "Manufacturing Yield", value: 92.5, fullMark: 100 },
-      { metric: "On-time Delivery", value: 94.8, fullMark: 100 },
-      { metric: "Quality Compliance", value: 97.2, fullMark: 100 },
-      { metric: "Cost Efficiency", value: 89.3, fullMark: 100 },
-      { metric: "Inventory Turnover", value: 91.7, fullMark: 100 },
+    barData: [
+      { quarter: "Q1", manufacturing: 92, distribution: 94, quality: 96 },
+      { quarter: "Q2", manufacturing: 93, distribution: 95, quality: 97 },
+      { quarter: "Q3", manufacturing: 94, distribution: 96, quality: 98 },
+      { quarter: "Q4", manufacturing: 95, distribution: 97, quality: 99 }
     ],
-  },
+    pieData: [
+      { name: "Manufacturing", value: 95 },
+      { name: "Distribution", value: 97 },
+      { name: "Quality", value: 99 }
+    ]
+  }
 }
 
 // Available chart types for each KPI
 export const availableChartTypes: Record<string, ChartType[]> = {
   "revenue-growth": ["line", "bar", "pie"],
-  "rd-pipeline": ["bar", "line", "pie"],
+  "rd-pipeline": ["line", "bar", "pie"],
   "market-share": ["line", "bar", "pie"],
-  "operational-efficiency": ["bar", "line", "radar"],
+  "operational-efficiency": ["line", "bar", "pie"]
 }
 
 // Mock categories for filtering
