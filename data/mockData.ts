@@ -27,7 +27,7 @@ export const kpiData: KPI[] = [
   },
   {
     id: "rd-pipeline",
-    name: "R&D Pipeline",
+    name: "R&D Pipeline Progress",
     description: "Tracks the number and progress of products in development",
     category: "Research",
     accessLevel: "public",
@@ -145,7 +145,7 @@ export const mockChartData = {
       { quarter: "Q1", share: 25, target: 27 },
       { quarter: "Q2", share: 26, target: 27 },
       { quarter: "Q3", share: 27, target: 27 },
-      { quarter: "Q4", share: 28, target: 27 }
+      { quarter: "Q4", share: 25, target: 27 }
     ],
     barData: [
       { quarter: "Q1", share: 25, target: 27 },

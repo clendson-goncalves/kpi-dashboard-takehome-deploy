@@ -33,16 +33,32 @@ export function KPICard({ kpi, onRequestAccess, selectable = false }: KPICardPro
     if (!chartData?.lineData) return 0
     
     const data = chartData.lineData
-    const lastPoint = data[data.length - 1] as ChartDataPoint
-    return lastPoint?.value || lastPoint?.share || lastPoint?.efficiency || lastPoint?.success || 0
+    const lastPoint = data[data.length - 1]
+    
+    // Check for different data structures
+    if ('revenue' in lastPoint) return lastPoint.revenue as number
+    if ('share' in lastPoint) return lastPoint.share as number
+    if ('manufacturing' in lastPoint) return lastPoint.manufacturing as number
+    if ('phaseI' in lastPoint) return lastPoint.phaseI as number
+    
+    return 0
   }
   
   const getPreviousValue = () => {
     if (!chartData?.lineData) return 0
     
     const data = chartData.lineData
-    const prevPoint = data[data.length - 2] as ChartDataPoint
-    return prevPoint?.value || prevPoint?.share || prevPoint?.efficiency || prevPoint?.success || 0
+    if (data.length < 2) return 0
+    
+    const prevPoint = data[data.length - 2]
+    
+    // Check for different data structures
+    if ('revenue' in prevPoint) return prevPoint.revenue as number
+    if ('share' in prevPoint) return prevPoint.share as number
+    if ('manufacturing' in prevPoint) return prevPoint.manufacturing as number
+    if ('phaseI' in prevPoint) return prevPoint.phaseI as number
+    
+    return 0
   }
 
   const latestValue = getLatestValue()
@@ -74,7 +90,7 @@ export function KPICard({ kpi, onRequestAccess, selectable = false }: KPICardPro
         )}
         onClick={handleClick}
       >
-        <CardContent className="pt-6">
+        <CardContent className="">
           <div className="flex flex-col">
             <div className="flex justify-between items-start mb-4">
               <div className="flex-1">
@@ -94,11 +110,11 @@ export function KPICard({ kpi, onRequestAccess, selectable = false }: KPICardPro
             <div className="flex flex-col">
               <span className="text-3xl font-bold">{latestValue.toFixed(1)}%</span>
               <div className="flex items-center gap-1 mt-1">
-                <span className={`text-sm flex items-center gap-0.5 ${trend ? 'text-green-500' : 'text-red-500'}`}>
+                <span className={`text-sm font-bold flex items-center gap-0.5 ${trend ? 'text-green-600' : 'text-red-600'}`}>
                   <ChevronUp className={`h-3 w-3 ${!trend && 'rotate-180'}`} />
                   {trendValue}%
                 </span>
-                <span className="text-sm text-muted-foreground">
+                <span className="text-xs text-muted-foreground">
                   vs target {kpi.target}%
                 </span>
               </div>
