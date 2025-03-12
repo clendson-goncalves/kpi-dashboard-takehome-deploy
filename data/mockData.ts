@@ -1,4 +1,4 @@
-import type { KPI, ChartType } from "../types/kpi"
+import { KPI, ChartType } from "@/types/kpi"
 
 // Mock KPI data
 export const kpiData: KPI[] = [

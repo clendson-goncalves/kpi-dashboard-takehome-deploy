@@ -1,6 +1,5 @@
 "use client"
 
-import type { KPI } from "@/types/kpi"
 import { Card, CardContent } from "@/components/ui/card"
 import { Lock, ChevronUp, Check } from "lucide-react"
 import { useState } from "react"
@@ -8,33 +7,26 @@ import { KPIDetailsModal } from "./KPIDetailsModal"
 import { mockChartData } from "@/data/mockData"
 import { useVisualizationStore } from "@/store/visualizationStore"
 import { cn } from "@/lib/utils"
-
+import type { KPI } from "@/types/kpi"
 interface KPICardProps {
   kpi: KPI
   onRequestAccess: () => void
   selectable?: boolean
 }
 
-type ChartDataPoint = {
-  value?: number
-  share?: number
-  efficiency?: number
-  success?: number
-}
-
 export function KPICard({ kpi, onRequestAccess, selectable = false }: KPICardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const { selectedKpiId, selectKpi } = useVisualizationStore()
-  
+  const { selectedKpiId } = useVisualizationStore()
+
   // Get the latest value from chart data
   const chartData = mockChartData[kpi.id as keyof typeof mockChartData]
-  
+
   const getLatestValue = () => {
     if (!chartData?.lineData) return 0
-    
+
     const data = chartData.lineData
     const lastPoint = data[data.length - 1]
-    
+
     // Check for different data structures
     if ('revenue' in lastPoint) return lastPoint.revenue as number
     if ('share' in lastPoint) return lastPoint.share as number
@@ -44,18 +36,18 @@ export function KPICard({ kpi, onRequestAccess, selectable = false }: KPICardPro
     if ('compliance' in lastPoint) return lastPoint.compliance as number
     if ('efficiency' in lastPoint) return lastPoint.efficiency as number
     if ('innovation' in lastPoint) return lastPoint.innovation as number
-    
+
     return 0
   }
-  
+
   const getPreviousValue = () => {
     if (!chartData?.lineData) return 0
-    
+
     const data = chartData.lineData
     if (data.length < 2) return 0
-    
+
     const prevPoint = data[data.length - 2]
-    
+
     // Check for different data structures
     if ('revenue' in prevPoint) return prevPoint.revenue as number
     if ('share' in prevPoint) return prevPoint.share as number
@@ -65,7 +57,7 @@ export function KPICard({ kpi, onRequestAccess, selectable = false }: KPICardPro
     if ('compliance' in prevPoint) return prevPoint.compliance as number
     if ('efficiency' in prevPoint) return prevPoint.efficiency as number
     if ('innovation' in prevPoint) return prevPoint.innovation as number
-    
+
     return 0
   }
 
@@ -82,16 +74,12 @@ export function KPICard({ kpi, onRequestAccess, selectable = false }: KPICardPro
       return
     }
 
-    if (selectable) {
-      selectKpi(kpi.id)
-    } else {
-      setIsModalOpen(true)
-    }
+    setIsModalOpen(true)
   }
 
   return (
     <>
-      <Card 
+      <Card
         className={cn(
           "cursor-pointer transition-all hover:shadow-md",
           isSelected && "ring-2 ring-primary"
@@ -114,7 +102,7 @@ export function KPICard({ kpi, onRequestAccess, selectable = false }: KPICardPro
                 )}
               </div>
             </div>
-            
+
             <div className="flex flex-col">
               <span className="text-3xl font-bold">{latestValue.toFixed(1)}%</span>
               <div className="flex items-center gap-1 mt-1">
@@ -132,7 +120,7 @@ export function KPICard({ kpi, onRequestAccess, selectable = false }: KPICardPro
       </Card>
 
       {kpi.hasAccess && !selectable && (
-        <KPIDetailsModal 
+        <KPIDetailsModal
           kpi={kpi}
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}

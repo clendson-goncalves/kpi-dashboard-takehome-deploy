@@ -3,10 +3,7 @@
 import { useState } from "react"
 import { useKpiStore } from "@/store/kpiStore"
 import { KPICard } from "./KPICard"
-import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { categories } from "@/data/mockData"
 import {
   Dialog,
   DialogContent,
@@ -23,7 +20,7 @@ interface KPIListProps {
 }
 
 export function KPIList({ searchQuery, selectedCategory }: KPIListProps) {
-  const { kpis, selectedCategory: storeSelectedCategory, searchQuery: storeSearchQuery, setSelectedCategory, setSearchQuery, requestAccess } =
+  const { kpis, requestAccess } =
     useKpiStore()
   const [selectedKpiId, setSelectedKpiId] = useState<string | null>(null)
   const [accessReason, setAccessReason] = useState("")

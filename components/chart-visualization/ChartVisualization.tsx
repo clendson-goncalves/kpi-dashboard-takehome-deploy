@@ -1,10 +1,8 @@
 "use client"
 
 import { useKpiStore } from "@/store/kpiStore"
-import { useVisualizationStore } from "@/store/visualizationStore"
 import { mockChartData } from "@/data/mockData"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { useState } from "react"
 import {
   Bar,
   BarChart,
@@ -20,7 +18,6 @@ import {
   Tooltip,
   Cell,
 } from "recharts"
-import type { ChartData } from "@/types/kpi"
 
 type ChartDataType = {
   lineData?: Record<string, string | number>[];
@@ -142,29 +139,6 @@ export function renderChart(kpiId: string, chartType: string, height: number = 3
 }
 
 export function ChartVisualization() {
-  const { kpis } = useKpiStore()
-  const { currentLayout, removeFromLayout, annotations, addAnnotation } = useVisualizationStore()
-  const [annotationText, setAnnotationText] = useState("")
-  const [annotatingKpiId, setAnnotatingKpiId] = useState<string | null>(null)
-  const [dialogOpen, setDialogOpen] = useState(false)
-
-  const handleAddAnnotation = () => {
-    if (annotatingKpiId && annotationText) {
-      addAnnotation(annotatingKpiId, annotationText)
-      setAnnotationText("")
-      setDialogOpen(false)
-    }
-  }
-
-  if (currentLayout.visualizations.length === 0) {
-    return (
-      <div className="p-8 border rounded-md bg-muted/50 text-center">
-        <p className="text-muted-foreground">
-          No visualizations added to layout yet. Select KPIs and add them to your layout.
-        </p>
-      </div>
-    )
-  }
 
   return (
     <div className="grid grid-cols-4 gap-4">

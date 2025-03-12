@@ -3,7 +3,6 @@
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { KPIList } from "@/components/kpi-selection/KPIList"
-import { LayoutsView } from "@/components/layouts/LayoutsView"
 import { Button } from "@/components/ui/button"
 import { PackagePlus, Search } from "lucide-react"
 import { useState } from "react"
@@ -85,7 +84,9 @@ export default function Home() {
             </TabsContent>
 
             <TabsContent value="layouts" className="px-4 py-8 space-y-10">
-              <LayoutsView />
+              <div className="text-center text-muted-foreground py-8">
+                Layouts content coming soon
+              </div>
             </TabsContent>
 
             <TabsContent value="storyboards" className="px-4 py-8 space-y-10">
