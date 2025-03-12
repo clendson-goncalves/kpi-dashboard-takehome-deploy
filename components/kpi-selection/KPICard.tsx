@@ -40,6 +40,10 @@ export function KPICard({ kpi, onRequestAccess, selectable = false }: KPICardPro
     if ('share' in lastPoint) return lastPoint.share as number
     if ('manufacturing' in lastPoint) return lastPoint.manufacturing as number
     if ('phaseI' in lastPoint) return lastPoint.phaseI as number
+    if ('score' in lastPoint) return lastPoint.score as number
+    if ('compliance' in lastPoint) return lastPoint.compliance as number
+    if ('efficiency' in lastPoint) return lastPoint.efficiency as number
+    if ('innovation' in lastPoint) return lastPoint.innovation as number
     
     return 0
   }
@@ -57,6 +61,10 @@ export function KPICard({ kpi, onRequestAccess, selectable = false }: KPICardPro
     if ('share' in prevPoint) return prevPoint.share as number
     if ('manufacturing' in prevPoint) return prevPoint.manufacturing as number
     if ('phaseI' in prevPoint) return prevPoint.phaseI as number
+    if ('score' in prevPoint) return prevPoint.score as number
+    if ('compliance' in prevPoint) return prevPoint.compliance as number
+    if ('efficiency' in prevPoint) return prevPoint.efficiency as number
+    if ('innovation' in prevPoint) return prevPoint.innovation as number
     
     return 0
   }
