@@ -36,30 +36,28 @@ export default function Home() {
           <p className="text-slate-700 text-center">Browse for assets needed to report and present analysis.</p>
         </div>
 
-        <div className="flex justify-center items-center gap-2">
-          <div className="relative w-full max-w-[560px]">
+        <div className="flex flex-col sm:flex-row items-center gap-4 px-8 mb-6">
+          <div className="relative flex-1 w-full">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 h-4 w-4" />
             <Input
               placeholder="Type to search..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-white"
+              className="pl-10 bg-white w-full"
             />
           </div>
-          <div className="flex justify-center items-center bg-white text-slate-500">
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select category" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((category) => (
-                  <SelectItem key={category.id} value={category.id}>
-                    {category.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <SelectTrigger className="w-full sm:w-[180px] bg-white">
+              <SelectValue placeholder="Select category" />
+            </SelectTrigger>
+            <SelectContent>
+              {categories.map((category) => (
+                <SelectItem key={category.id} value={category.id}>
+                  {category.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="rounded-md px-4 py-3">
