@@ -1,21 +1,17 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useRef, useEffect } from "react"
 import { useDrag } from "react-dnd"
 import type { DragSourceMonitor } from "react-dnd"
-import { Grip, X, Edit, Check, Move, Expand } from "lucide-react"
+import { Grip, X, Edit, Check } from "lucide-react"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import type { DashboardItem, Position } from "@/types/dashboard"
 import ChartRenderer from "@/components/dashboard-creation/ChartRenderer"
 import { kpiData } from "@/data/mockData"
-
-const GRID_SIZE = 25 // Grid size in pixels
-const MIN_WIDTH_UNITS = 4 // Minimum width in grid units (100px)
-const MIN_HEIGHT_UNITS = 4 // Minimum height in grid units (100px)
+import { GRID } from "@/components/dashboard-creation/DashboardEditor"
 
 interface DraggableChartItemProps {
   item: DashboardItem
@@ -38,8 +34,8 @@ export default function DraggableChartItem({
   const [title, setTitle] = useState(item.title)
   const [resizing, setResizing] = useState(false)
   const [currentSize, setCurrentSize] = useState({
-    width: item.size.width * 4,
-    height: item.size.height * 4
+    width: item.size.width * GRID.UNITS_PER_100PX,
+    height: item.size.height * GRID.UNITS_PER_100PX
   })
   const startResizePos = useRef({ x: 0, y: 0 })
   const startSize = useRef({ width: 0, height: 0 })
@@ -53,8 +49,8 @@ export default function DraggableChartItem({
 
   useEffect(() => {
     setCurrentSize({
-      width: item.size.width * 4,
-      height: item.size.height * 4
+      width: item.size.width * GRID.UNITS_PER_100PX,
+      height: item.size.height * GRID.UNITS_PER_100PX
     })
   }, [item.size])
 
@@ -93,30 +89,38 @@ export default function DraggableChartItem({
     setResizing(true)
     startResizePos.current = { x: e.clientX, y: e.clientY }
     startSize.current = {
-      width: item.size.width * 4,
-      height: item.size.height * 4
+      width: item.size.width * GRID.UNITS_PER_100PX,
+      height: item.size.height * GRID.UNITS_PER_100PX
     }
 
     const handleMouseMove = (e: MouseEvent) => {
       if (!resizing) return
 
-      // Calculate the delta in grid units (25px per grid unit)
-      const deltaX = Math.floor((e.clientX - startResizePos.current.x) / GRID_SIZE)
-      const deltaY = Math.floor((e.clientY - startResizePos.current.y) / GRID_SIZE)
+      // Calculate the delta in grid units
+      const deltaX = Math.floor((e.clientX - startResizePos.current.x) / GRID.SIZE)
+      const deltaY = Math.floor((e.clientY - startResizePos.current.y) / GRID.SIZE)
 
-      // Calculate new width and height, ensuring minimum size
-      const newWidth = Math.max(MIN_WIDTH_UNITS, startSize.current.width + deltaX)
-      const newHeight = Math.max(MIN_HEIGHT_UNITS, startSize.current.height + deltaY)
+      // Calculate new width and height in grid units, ensuring minimum size
+      const newWidth = Math.max(GRID.MIN_UNITS, startSize.current.width + deltaX)
+      const newHeight = Math.max(GRID.MIN_UNITS, startSize.current.height + deltaY)
+
+      // Snap to grid
+      const snappedWidth = Math.round(newWidth)
+      const snappedHeight = Math.round(newHeight)
 
       // Update local state for visual feedback during resize
-      setCurrentSize({ width: newWidth, height: newHeight })
+      setCurrentSize({ width: snappedWidth, height: snappedHeight })
     }
 
     const handleMouseUp = () => {
       if (resizing) {
-        // Convert back to 100px units when updating parent
-        if (currentSize.width !== item.size.width * 4 || currentSize.height !== item.size.height * 4) {
-          onResize(item.id, Math.floor(currentSize.width / 4), Math.floor(currentSize.height / 4))
+        // Convert back to larger grid units when updating parent
+        if (currentSize.width !== item.size.width * GRID.UNITS_PER_100PX || currentSize.height !== item.size.height * GRID.UNITS_PER_100PX) {
+          onResize(
+            item.id, 
+            Math.floor(currentSize.width / GRID.UNITS_PER_100PX), 
+            Math.floor(currentSize.height / GRID.UNITS_PER_100PX)
+          )
         }
         setResizing(false)
       }
@@ -140,10 +144,10 @@ export default function DraggableChartItem({
       ref={itemRef}
       style={{
         position: 'absolute',
-        left: `${item.position.x * GRID_SIZE * 4}px`,
-        top: `${item.position.y * GRID_SIZE * 4}px`,
-        width: `${currentSize.width * GRID_SIZE}px`,
-        height: `${currentSize.height * GRID_SIZE}px`,
+        left: `${GRID.toPixels(item.position.x)}px`,
+        top: `${GRID.toPixels(item.position.y)}px`,
+        width: `${GRID.toPixels(currentSize.width)}px`,
+        height: `${GRID.toPixels(currentSize.height)}px`,
         opacity: isDragging ? 0.5 : 1,
         transition: 'opacity 0.2s',
         zIndex: resizing ? 100 : 1,
@@ -197,7 +201,6 @@ export default function DraggableChartItem({
           onMouseDown={handleResizeStart}
           className="absolute bottom-0 right-0 w-4 h-4 cursor-se-resize flex items-center justify-center text-muted-foreground/50 hover:text-muted-foreground"
         >
-
           <svg
             viewBox="5 5 24 24"
             fill="none"
@@ -214,5 +217,4 @@ export default function DraggableChartItem({
       </Card>
     </div>
   )
-}
-
+} 

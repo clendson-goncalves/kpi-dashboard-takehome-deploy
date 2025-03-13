@@ -7,8 +7,40 @@ import type { DashboardItem, Position, ChartType } from "@/types/dashboard"
 import DraggableChartItem from "@/components/dashboard-creation/DraggableChartItem"
 import { LayoutGrid } from "lucide-react"
 
-const GRID_SIZE = 25 // Grid size in pixels
-const GRID_UNITS = 4 // Number of grid units per 100px
+// Grid configuration that will be used across components
+export const GRID = {
+  // Core settings
+  SIZE: 20, // Base grid size in pixels
+  MIN_CHART_WIDTH: 100, // Minimum chart width in pixels
+  MIN_CHART_HEIGHT: 100, // Minimum chart height in pixels
+  COLUMNS: 32, // Number of columns in the grid
+  ROWS: 24, // Default number of rows
+
+  // Derived settings
+  get UNITS_PER_100PX() {
+    return Math.floor(100 / this.SIZE)
+  },
+  get MIN_UNITS() {
+    return Math.ceil(this.MIN_CHART_WIDTH / this.SIZE)
+  },
+
+  // Utility functions
+  toPixels: function(units: number) {
+    return units * this.SIZE
+  },
+  toGridUnits: function(pixels: number) {
+    return Math.floor(pixels / this.SIZE)
+  },
+  snapToGrid: function(pixels: number) {
+    return Math.round(pixels / this.SIZE) * this.SIZE
+  },
+  snapPositionToGrid: function(position: Position): Position {
+    return {
+      x: Math.max(0, Math.round(position.x)),
+      y: Math.max(0, Math.round(position.y))
+    }
+  }
+} as const
 
 interface DashboardEditorProps {
   items: DashboardItem[]
@@ -26,10 +58,10 @@ export default function DashboardEditor({ items, onUpdateItem, onRemoveItem, onA
     if (!gridRef.current) return { x: 0, y: 0 }
 
     const rect = gridRef.current.getBoundingClientRect()
-    const x = Math.floor((clientX - rect.left) / (GRID_SIZE * GRID_UNITS))
-    const y = Math.floor((clientY - rect.top) / (GRID_SIZE * GRID_UNITS))
+    const x = Math.floor((clientX - rect.left) / GRID.SIZE)
+    const y = Math.floor((clientY - rect.top) / GRID.SIZE)
 
-    return { x, y }
+    return GRID.snapPositionToGrid({ x, y })
   }, [])
 
   // Check if a position would cause a collision with existing items
@@ -38,11 +70,17 @@ export default function DashboardEditor({ items, onUpdateItem, onRemoveItem, onA
       return items.some((item) => {
         if (excludeId && item.id === excludeId) return false
 
+        // Convert sizes to grid units for comparison
+        const itemWidth = item.size.width * GRID.UNITS_PER_100PX
+        const itemHeight = item.size.height * GRID.UNITS_PER_100PX
+        const itemX = item.position.x
+        const itemY = item.position.y
+
         return (
-          position.x < item.position.x + item.size.width &&
-          position.x + width > item.position.x &&
-          position.y < item.position.y + item.size.height &&
-          position.y + height > item.position.y
+          position.x < itemX + itemWidth &&
+          position.x + width > itemX &&
+          position.y < itemY + itemHeight &&
+          position.y + height > itemY
         )
       })
     },
@@ -80,8 +118,8 @@ export default function DashboardEditor({ items, onUpdateItem, onRemoveItem, onA
           // Check for collisions with other items
           const hasCollision = checkCollision(
             position,
-            existingItem.size.width,
-            existingItem.size.height,
+            existingItem.size.width * GRID.UNITS_PER_100PX,
+            existingItem.size.height * GRID.UNITS_PER_100PX,
             item.id
           )
 
@@ -112,8 +150,8 @@ export default function DashboardEditor({ items, onUpdateItem, onRemoveItem, onA
       // Check for collisions with other items
       const hasCollision = checkCollision(
         position,
-        item.size.width,
-        item.size.height,
+        item.size.width * GRID.UNITS_PER_100PX,
+        item.size.height * GRID.UNITS_PER_100PX,
         id
       )
 
@@ -129,8 +167,8 @@ export default function DashboardEditor({ items, onUpdateItem, onRemoveItem, onA
       // Check for collisions with the new size
       const hasCollision = checkCollision(
         item.position,
-        width,
-        height,
+        width * GRID.UNITS_PER_100PX,
+        height * GRID.UNITS_PER_100PX,
         id
       )
 
@@ -152,13 +190,18 @@ export default function DashboardEditor({ items, onUpdateItem, onRemoveItem, onA
 
   // Calculate grid dimensions based on items
   const calculateGridDimensions = () => {
-    if (items.length === 0) return { width: 32, height: 24 } // Default size (8 * 4 grid units)
+    if (items.length === 0) return { 
+      width: GRID.COLUMNS * GRID.SIZE, 
+      height: GRID.ROWS * GRID.SIZE 
+    }
 
-    const maxY = Math.max(...items.map((item) => item.position.y + item.size.height))
+    const maxY = Math.max(...items.map((item) => 
+      item.position.y + item.size.height * GRID.UNITS_PER_100PX
+    ))
 
     return {
-      width: 32, // Fixed width of 8 columns (32 grid units)
-      height: Math.max(24, maxY * GRID_UNITS + GRID_UNITS),
+      width: GRID.COLUMNS * GRID.SIZE,
+      height: Math.max(GRID.ROWS * GRID.SIZE, GRID.toPixels(maxY + 1)),
     }
   }
 
@@ -189,11 +232,11 @@ export default function DashboardEditor({ items, onUpdateItem, onRemoveItem, onA
             }}
             className="relative border border-dashed rounded-md overflow-auto bg-muted/5"
             style={{
-              height: `${Math.max(600, height * GRID_SIZE)}px`,
-              width: `${width * GRID_SIZE}px`,
+              height: `${Math.max(600, height)}px`,
+              width: `${width}px`,
               minWidth: '100%',
               maxWidth: '100%',
-              backgroundSize: `${GRID_SIZE}px ${GRID_SIZE}px`,
+              backgroundSize: `${GRID.SIZE}px ${GRID.SIZE}px`,
               backgroundImage:
                 "linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px)",
             }}
@@ -203,10 +246,10 @@ export default function DashboardEditor({ items, onUpdateItem, onRemoveItem, onA
               <div
                 className="absolute border-2 border-primary rounded-md pointer-events-none opacity-50 bg-primary/10"
                 style={{
-                  left: `${dropIndicator.x * GRID_SIZE * GRID_UNITS}px`,
-                  top: `${dropIndicator.y * GRID_SIZE * GRID_UNITS}px`,
-                  width: `${2 * GRID_SIZE * GRID_UNITS}px`,
-                  height: `${2 * GRID_SIZE * GRID_UNITS}px`,
+                  left: `${GRID.toPixels(dropIndicator.x)}px`,
+                  top: `${GRID.toPixels(dropIndicator.y)}px`,
+                  width: `${GRID.toPixels(2 * GRID.UNITS_PER_100PX)}px`,
+                  height: `${GRID.toPixels(2 * GRID.UNITS_PER_100PX)}px`,
                 }}
               />
             )}
@@ -227,5 +270,4 @@ export default function DashboardEditor({ items, onUpdateItem, onRemoveItem, onA
       </CardContent>
     </Card>
   )
-}
-
+} 
