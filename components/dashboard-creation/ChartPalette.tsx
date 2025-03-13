@@ -133,6 +133,7 @@ export default function ChartPalette({ onAddChart }: ChartPaletteProps) {
               onAddChart={onAddChart}
               kpiId={selectedKpi}
               disabled={!selectedKpi || !kpis.find(k => k.id === selectedKpi)?.hasAccess}
+              className="border border-slate-300 "
             />
             <ChartOption
               type="line"
@@ -140,6 +141,7 @@ export default function ChartPalette({ onAddChart }: ChartPaletteProps) {
               onAddChart={onAddChart}
               kpiId={selectedKpi}
               disabled={!selectedKpi || !kpis.find(k => k.id === selectedKpi)?.hasAccess}
+              className="border border-slate-300 "
             />
             <ChartOption
               type="pie"
@@ -147,7 +149,7 @@ export default function ChartPalette({ onAddChart }: ChartPaletteProps) {
               onAddChart={onAddChart}
               kpiId={selectedKpi}
               disabled={!selectedKpi || !kpis.find(k => k.id === selectedKpi)?.hasAccess}
-              className="col-span-2"
+              className="border border-slate-300 col-span-2"
             />
           </div>
         </div>

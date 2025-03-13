@@ -8,7 +8,6 @@ import ChartPalette from "@/components/dashboard-creation/ChartPalette"
 import SavedLayouts from "@/components/dashboard-creation/SavedLayouts"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { useToast } from "@/hooks/use-toast"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { Plus, Save } from "lucide-react"
@@ -32,7 +31,6 @@ export default function DashboardCreator() {
   const [layoutName, setLayoutName] = useState("New Dashboard")
   const [showNewLayoutConfirm, setShowNewLayoutConfirm] = useState(false)
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
-  const { toast } = useToast()
 
   // Find the next available position in the grid
   const findNextAvailablePosition = (): Position => {
@@ -60,6 +58,23 @@ export default function DashboardCreator() {
 
     // If all positions in the next row are occupied, place at the beginning of the row after
     return { x: 0, y: maxY + 1 }
+  }
+
+  const checkCollision = (
+    position: Position,
+    width: number,
+    height: number,
+    excludeId: string
+  ): boolean => {
+    const otherItems = items.filter((item) => item.id !== excludeId)
+    return otherItems.some((item) => {
+      return (
+        position.x < item.position.x + item.size.width &&
+        position.x + width > item.position.x &&
+        position.y < item.position.y + item.size.height &&
+        position.y + height > item.position.y
+      )
+    })
   }
 
   const handleAddChart = (type: ChartType, kpiId: string) => {
@@ -119,7 +134,7 @@ export default function DashboardCreator() {
 
     // If occupied, find next available position
     const finalPosition = isOccupied ? findNextAvailablePosition() : position
-    
+
     let data: any[] = []
     switch (type) {
       case "line":
@@ -150,25 +165,15 @@ export default function DashboardCreator() {
   }
 
   const handleUpdateItem = (updatedItem: DashboardItem) => {
-    // Check for collisions with other items
-    const otherItems = items.filter((item) => item.id !== updatedItem.id)
-
-    const hasCollision = otherItems.some((item) => {
-      return (
-        updatedItem.position.x < item.position.x + item.size.width &&
-        updatedItem.position.x + updatedItem.size.width > item.position.x &&
-        updatedItem.position.y < item.position.y + item.size.height &&
-        updatedItem.position.y + updatedItem.size.height > item.position.y
-      )
-    })
+    const hasCollision = checkCollision(
+      updatedItem.position,
+      updatedItem.size.width,
+      updatedItem.size.height,
+      updatedItem.id
+    )
 
     if (hasCollision) {
       // If there's a collision, don't update the position/size
-      toast({
-        title: "Cannot move or resize",
-        description: "This would overlap with another chart",
-        variant: "destructive",
-      })
       return
     }
 
@@ -183,11 +188,6 @@ export default function DashboardCreator() {
 
   const handleSaveLayout = () => {
     if (!layoutName.trim()) {
-      toast({
-        title: "Error",
-        description: "Please provide a name for your layout",
-        variant: "destructive",
-      })
       return
     }
 
@@ -210,11 +210,6 @@ export default function DashboardCreator() {
     setLayouts(updatedLayouts)
     setCurrentLayout(newLayout)
     setHasUnsavedChanges(false)
-
-    toast({
-      title: "Success",
-      description: `Layout "${layoutName}" has been saved`,
-    })
   }
 
   const handleLoadLayout = (layout: DashboardLayout) => {
@@ -233,11 +228,6 @@ export default function DashboardCreator() {
     setCurrentLayout(layout)
     setLayoutName(layout.name)
     setHasUnsavedChanges(false)
-
-    toast({
-      title: "Layout Loaded",
-      description: `"${layout.name}" has been loaded into the editor`,
-    })
   }
 
   const handleNewLayout = () => {
@@ -253,11 +243,6 @@ export default function DashboardCreator() {
     setCurrentLayout(null)
     setLayoutName("New Dashboard")
     setHasUnsavedChanges(false)
-
-    toast({
-      title: "New Layout",
-      description: "Started a new dashboard layout",
-    })
   }
 
   const handleConfirmAction = () => {
@@ -281,11 +266,6 @@ export default function DashboardCreator() {
     if (currentLayout?.id === layoutId) {
       resetLayout()
     }
-
-    toast({
-      title: "Layout Deleted",
-      description: "The layout has been deleted",
-    })
   }
 
   return (
@@ -331,7 +311,7 @@ export default function DashboardCreator() {
             {/* Dashboard Editor Area */}
             <div className="grid grid-cols-1 lg:grid-cols-4 ">
               <div className="lg:col-span-1">
-                <ChartPalette onAddChart={handleAddChart}/>
+                <ChartPalette onAddChart={handleAddChart} />
               </div>
               <div className="lg:col-span-3">
                 <DashboardEditor
@@ -361,7 +341,8 @@ export default function DashboardCreator() {
                   <AlertDialogCancel onClick={() => sessionStorage.removeItem("layout-to-load")}>
                     Cancel
                   </AlertDialogCancel>
-                  <AlertDialogAction onClick={handleConfirmAction}>Continue</AlertDialogAction>
+                  <AlertDialogAction>
+                    Continue</AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
@@ -371,4 +352,3 @@ export default function DashboardCreator() {
     </DndProvider>
   )
 }
-

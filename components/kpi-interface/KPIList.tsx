@@ -29,6 +29,8 @@ export function KPIList({ searchQuery, selectedCategory }: KPIListProps) {
   const handleRequestAccess = (kpiId: string) => {
     setSelectedKpiId(kpiId)
     setDialogOpen(true)
+
+    console.log(kpiId)
   }
 
   const handleSubmitRequest = () => {
@@ -74,7 +76,8 @@ export function KPIList({ searchQuery, selectedCategory }: KPIListProps) {
             <Button variant="outline" onClick={() => setDialogOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleSubmitRequest}>Submit Request</Button>
+            <Button
+              onClick={handleSubmitRequest}>Submit Request</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

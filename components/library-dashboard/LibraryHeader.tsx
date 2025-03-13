@@ -25,7 +25,8 @@ export default function LibraryHeader({
                 <Button
                     variant="outline"
                     size="sm"
-                    className="h-10 w-28 gap-2 bg-slate-500 text-white hover:bg-slate-700 hover:text-white border-0 rounded-md"
+                    className="h-10 w-28 gap-2 bg-slate-500 text-white
+                     hover:bg-slate-700 hover:text-white border-0 rounded-md"
                 >
                     <PackagePlus className="h-4 w-4" />
                     Request

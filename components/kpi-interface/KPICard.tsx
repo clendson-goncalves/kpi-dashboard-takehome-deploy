@@ -27,7 +27,7 @@ export function KPICard({ kpi, onRequestAccess, selectable = false }: KPICardPro
     const data = chartData.lineData
     const lastPoint = data[data.length - 1]
 
-    // Check for different data structures
+    // Check data structures
     if ('revenue' in lastPoint) return lastPoint.revenue as number
     if ('share' in lastPoint) return lastPoint.share as number
     if ('manufacturing' in lastPoint) return lastPoint.manufacturing as number
@@ -81,8 +81,7 @@ export function KPICard({ kpi, onRequestAccess, selectable = false }: KPICardPro
     <>
       <Card
         className={cn(
-          "cursor-pointer transition-all hover:shadow-md",
-          isSelected && "ring-2 ring-primary"
+          "cursor-pointer transition-all hover:shadow-md"
         )}
         onClick={handleClick}
       >
@@ -96,9 +95,6 @@ export function KPICard({ kpi, onRequestAccess, selectable = false }: KPICardPro
               <div className="flex items-center gap-2">
                 {kpi.accessLevel === "restricted" && !kpi.hasAccess && (
                   <Lock className="h-4 w-4 text-muted-foreground" />
-                )}
-                {isSelected && (
-                  <Check className="h-4 w-4 text-primary" />
                 )}
               </div>
             </div>

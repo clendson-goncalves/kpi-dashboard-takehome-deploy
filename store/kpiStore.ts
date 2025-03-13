@@ -1,6 +1,7 @@
 import { create } from "zustand"
 import type { KPI } from "../types/kpi"
 import { kpiData } from "../data/mockData"
+import { toast } from "sonner"
 
 interface KPIState {
   kpis: KPI[]
@@ -56,10 +57,11 @@ export const useKpiStore = create<KPIState>((set, get) => ({
   requestAccess: (kpiId, reason) => {
     // In a real app, this would send a request to the server
     console.log(`Access requested for KPI ${kpiId} with reason: ${reason}`)
-    // For demo purposes, we'll automatically grant access after a request
+    // Automatically count 1s and grant access after any request
     setTimeout(() => {
       get().grantAccess(kpiId)
-    }, 2000)
+      toast.success(`The access was granted for KPI successfully.`)
+    }, 1000)
   },
 
   grantAccess: (kpiId) => {

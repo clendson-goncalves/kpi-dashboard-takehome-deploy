@@ -1,6 +1,6 @@
 "use client"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { KPIList } from "@/components/kpi-selection/KPIList"
+import { KPIList } from "@/components/kpi-interface/KPIList"
 import { useState } from "react"
 import DashboardCreator from "@/components/dashboard-creation/DashboardCreator"
 import LibraryHeader from "@/components/library-dashboard/LibraryHeader"
