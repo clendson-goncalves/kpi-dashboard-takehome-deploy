@@ -8,6 +8,7 @@ import { PackagePlus, Search } from "lucide-react"
 import { useState } from "react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { categories } from "@/data/mockData"
+import DashboardCreator from "@/components/dashboard-creation/dashboard-creator"
 
 type TabType = "featured" | "kpi" | "layouts" | "storyboards"
 
@@ -23,7 +24,7 @@ export default function Home() {
         <Button
           variant="outline"
           size="sm"
-          className="h-10 w-28 gap-2 bg-slate-500 text-white hover:bg-slate-700 border-0 rounded-md"
+          className="h-10 w-28 gap-2 bg-slate-500 text-white hover:bg-slate-700 hover:text-white border-0 rounded-md"
         >
           <PackagePlus className="h-4 w-4" />
           Request
@@ -43,11 +44,11 @@ export default function Home() {
               placeholder="Type to search..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-white w-full"
+              className="pl-10 bg-white w-full rounded-lg border-0 outline-none focus:ring-0 focus-visible:ring-0"
             />
           </div>
           <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-            <SelectTrigger className="w-full sm:w-[180px] bg-white">
+            <SelectTrigger className="w-full sm:w-[180px] bg-white rounded-lg border-0 outline-none focus:ring-0 focus-visible:ring-0">
               <SelectValue placeholder="Select category" />
             </SelectTrigger>
             <SelectContent>
@@ -81,9 +82,9 @@ export default function Home() {
               <KPIList searchQuery={searchQuery} selectedCategory={selectedCategory} />
             </TabsContent>
 
-            <TabsContent value="layouts" className="px-4 py-8 space-y-10">
+            <TabsContent value="layouts" className="px-4 py-0">
               <div className="text-center text-muted-foreground py-8">
-                Layouts content coming soon
+                <DashboardCreator />
               </div>
             </TabsContent>
 
