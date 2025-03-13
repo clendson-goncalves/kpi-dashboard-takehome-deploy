@@ -8,7 +8,7 @@ import { BarChart, LineChart, PieChart, Lock } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
-import type { ChartType } from "@/types/dashboard"
+import type { ChartType } from "@/types/kpi"
 import { useKpiStore } from "@/store/kpiStore"
 import { Button } from "@/components/ui/button"
 import {

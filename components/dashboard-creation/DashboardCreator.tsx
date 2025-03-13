@@ -21,7 +21,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import type { ChartType, DashboardItem, DashboardLayout, Position } from "@/types/dashboard"
+import type { ChartType, DashboardItem, DashboardLayout, Position } from "@/types/kpi"
 import { kpiData, mockChartData } from "@/data/mockData"
 
 export default function DashboardCreator() {

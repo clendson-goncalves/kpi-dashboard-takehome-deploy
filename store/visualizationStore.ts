@@ -1,6 +1,5 @@
 import { create } from "zustand"
 import type { ChartType } from "../types/kpi"
-import { availableChartTypes } from "../data/mockData"
 
 interface VisualizationState {
   selectedKpiId: string | null

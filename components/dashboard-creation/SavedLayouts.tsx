@@ -4,9 +4,8 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
-import type { DashboardLayout } from "@/types/dashboard"
-import { Eye, Trash2, Edit } from "lucide-react"
-
+import { Trash2, Edit } from "lucide-react"
+import type { DashboardLayout } from "@/types/kpi"
 interface SavedLayoutsProps {
   layouts: DashboardLayout[]
   onLoadLayout: (layout: DashboardLayout) => void
@@ -65,9 +64,6 @@ export default function SavedLayouts({ layouts, onLoadLayout, onDeleteLayout }: 
                   <TableCell className="text-center">{layout.items.length}</TableCell>
                   <TableCell className="">
                     <div className="flex justify-end gap-2">
-                      <Button variant="ghost" size="icon" onClick={() => handlePreview(layout)}>
-                        <Eye className="h-4 w-4 text-muted-foreground" />
-                      </Button>
                       <Button variant="ghost" size="icon" onClick={() => onLoadLayout(layout)}>
                         <Edit className="h-4 w-4 text-muted-foreground" />
                       </Button>

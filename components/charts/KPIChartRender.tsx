@@ -1,7 +1,5 @@
 "use client"
 
-import { ResponsiveContainer } from "recharts"
-
 import KPILineChart from "@/components/charts/KPILineChart"
 import KPIBarChart from "@/components/charts/KPIBarChart"
 import KPIPieChart from "@/components/charts/KPIPieChart"

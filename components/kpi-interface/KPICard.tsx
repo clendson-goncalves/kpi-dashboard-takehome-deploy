@@ -1,7 +1,7 @@
 "use client"
 
 import { Card, CardContent } from "@/components/ui/card"
-import { Lock, ChevronUp, Check } from "lucide-react"
+import { Lock, ChevronUp } from "lucide-react"
 import { useState } from "react"
 import { KPIDetailsModal } from "./KPIDetailsModal"
 import { mockChartData } from "@/data/mockData"

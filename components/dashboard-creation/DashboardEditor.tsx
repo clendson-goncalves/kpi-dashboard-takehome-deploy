@@ -3,7 +3,7 @@
 import { useRef, useCallback, useState } from "react"
 import { useDrop } from "react-dnd"
 import { Card, CardContent } from "@/components/ui/card"
-import type { DashboardItem, Position, ChartType } from "@/types/dashboard"
+import type { DashboardItem, Position, ChartType } from "@/types/kpi"
 import DraggableChartItem from "@/components/dashboard-creation/DraggableChartItem"
 import { LayoutGrid } from "lucide-react"
 

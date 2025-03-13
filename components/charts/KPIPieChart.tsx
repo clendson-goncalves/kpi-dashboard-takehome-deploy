@@ -2,8 +2,6 @@
 
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
 import { COLORS } from "@/types/kpi"
-import { Key } from 'lucide-react';
-
 
 interface KPIPieChartProps {
     data: {
