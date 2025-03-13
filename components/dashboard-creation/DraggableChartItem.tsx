@@ -153,13 +153,13 @@ export default function DraggableChartItem({
         zIndex: resizing ? 100 : 1,
       }}
     >
-      <Card className="w-full h-full relative gap-0 py-0 bg-white/50 backdrop-blur-sm border-none shadow-lg hover:shadow-xl transition-shadow">
-        <CardHeader className="flex flex-row items-center justify-between border-b">
+      <Card className="w-full h-full relative gap-0 py-0 bg-background/50 backdrop-blur-sm border-none shadow-lg hover:shadow-xl transition-shadow">
+        <CardHeader className="flex flex-row items-center p-0 px-1 justify-between border-b">
           <div
             ref={dragRef}
             className="cursor-move flex items-center gap-2 flex-1 min-w-0"
           >
-            <Grip className="h-4 w-4 text-muted-foreground/50" />
+            <Grip className="h-4 w-4 text-muted-foreground" />
             {editingTitle ? (
               <form onSubmit={handleTitleSubmit} className="flex items-center gap-1 flex-1 min-w-0">
                 <Input
@@ -194,7 +194,7 @@ export default function DraggableChartItem({
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="p-2 h-[calc(100%-40px)] bg-background/50">
+        <CardContent className="p-2 h-[calc(100%-40px)] w-full bg-background/50">
           <ChartRenderer type={item.type} data={item.data} />
         </CardContent>
         <div

@@ -27,7 +27,7 @@ export default function ChartRenderer({ type, data }: ChartRendererProps) {
 
   if (!data || data.length === 0) {
     return (
-      <div className="flex items-center justify-center h-full">
+      <div className="flex items-center justify-center h-full w-full">
         <p className="text-muted-foreground text-xs">No data available</p>
       </div>
     )
@@ -165,7 +165,7 @@ export default function ChartRenderer({ type, data }: ChartRendererProps) {
               cx="50%"
               cy="45%"
               outerRadius={40}
-              innerRadius={20}
+              innerRadius={0}
               dataKey="value"
               nameKey="name"
               label={({ percent }) => `${(percent * 100).toFixed(0)}%`}

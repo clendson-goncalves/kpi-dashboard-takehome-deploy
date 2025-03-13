@@ -10,7 +10,7 @@ import { LayoutGrid } from "lucide-react"
 // Grid configuration that will be used across components
 export const GRID = {
   // Core settings
-  SIZE: 20, // Base grid size in pixels
+  SIZE: 10, // Base grid size in pixels
   MIN_CHART_WIDTH: 100, // Minimum chart width in pixels
   MIN_CHART_HEIGHT: 100, // Minimum chart height in pixels
   COLUMNS: 32, // Number of columns in the grid
