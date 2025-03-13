@@ -1,7 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import type { KPI, ChartType } from "@/types/kpi"
+import type { KPI } from "@/types/kpi"
+import type { ChartType } from "@/types/dashboard"
 import { Bookmark, X, Link2, Grid, Info, BarChart as BarChartIcon, LineChart as LineChartIcon, PieChart as PieChartIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

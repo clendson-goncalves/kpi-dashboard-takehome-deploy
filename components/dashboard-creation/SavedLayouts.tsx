@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { Trash2, Edit } from "lucide-react"
-import type { DashboardLayout } from "@/types/kpi"
+import type { DashboardLayout } from "@/types/dashboard"
 interface SavedLayoutsProps {
   layouts: DashboardLayout[]
   onLoadLayout: (layout: DashboardLayout) => void

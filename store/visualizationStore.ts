@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import type { ChartType } from "../types/kpi"
+import type { ChartType } from "@/types/dashboard"
 
 interface VisualizationState {
   selectedKpiId: string | null
