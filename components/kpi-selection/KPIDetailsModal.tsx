@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { mockChartData, availableChartTypes } from "@/data/mockData"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { renderChart } from "@/components/kpi-selection/ChartVisualization"
+import KPIChartRender from "@/components/charts/KPIChartRender"
 
 interface KPIDetailsModalProps {
   kpi: KPI
@@ -29,8 +29,6 @@ export function KPIDetailsModal({ kpi, isOpen, onClose }: KPIDetailsModalProps) 
   const chartData = mockChartData[kpi.id as keyof typeof mockChartData] as ChartData
 
   const getChartData = () => {
-    console.log('Selected Chart Type:', selectedChart);
-    console.log('Chart Data:', chartData);
     switch (selectedChart.toLowerCase()) {
       case "line":
         return chartData.lineData || []
@@ -44,7 +42,6 @@ export function KPIDetailsModal({ kpi, isOpen, onClose }: KPIDetailsModalProps) 
   }
 
   const data = getChartData()
-  console.log('Processed Data:', data);
 
   return (
     <div className="fixed inset-0 bg-black/20 z-50 flex items-center justify-center p-4">
@@ -140,7 +137,9 @@ export function KPIDetailsModal({ kpi, isOpen, onClose }: KPIDetailsModalProps) 
 
             <div className="flex justify-center bg-slate-50 p-3 rounded-lg w-full h-[205px]">
               {data.length ?
-                (renderChart(kpi.id, selectedChart, 250)) : (
+                (
+                  <KPIChartRender type={selectedChart} data={data} />
+                ) : (
                   <div className="bg-slate-100 rounded-lg" />
                 )}
             </div>

@@ -6,7 +6,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import type { DashboardLayout } from "@/types/dashboard"
 import { Eye, Trash2, Edit } from "lucide-react"
-import ChartRenderer from "@/components/dashboard-creation/ChartRenderer"
 
 interface SavedLayoutsProps {
   layouts: DashboardLayout[]
@@ -83,51 +82,6 @@ export default function SavedLayouts({ layouts, onLoadLayout, onDeleteLayout }: 
           </Table>
         </div>
       )}
-
-      {/* Preview Dialog */}
-      <Dialog open={!!previewLayout} onOpenChange={() => setPreviewLayout(null)}>
-        <DialogContent className="max-w-4xl">
-          <DialogHeader>
-            <DialogTitle>{previewLayout?.name}</DialogTitle>
-          </DialogHeader>
-          <div className="py-4">
-            <div className="border rounded-md p-4 min-h-[400px] relative bg-muted/5">
-              {previewLayout?.items.map((item) => (
-                <div
-                  key={item.id}
-                  className="absolute border rounded-md overflow-hidden bg-background shadow-sm"
-                  style={{
-                    left: `${item.position.x * 100}px`,
-                    top: `${item.position.y * 100}px`,
-                    width: `${item.size.width * 100}px`,
-                    height: `${item.size.height * 100}px`,
-                  }}
-                >
-                  <div className="p-2 border-b text-sm font-medium">{item.title}</div>
-                  <div className="p-2 h-[calc(100%-32px)]">
-                    <ChartRenderer type={item.type} data={item.data} />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setPreviewLayout(null)}>
-              Close
-            </Button>
-            {previewLayout && (
-              <Button
-                onClick={() => {
-                  onLoadLayout(previewLayout)
-                  setPreviewLayout(null)
-                }}
-              >
-                Load Layout
-              </Button>
-            )}
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={!!deleteConfirmId} onOpenChange={() => setDeleteConfirmId(null)}>

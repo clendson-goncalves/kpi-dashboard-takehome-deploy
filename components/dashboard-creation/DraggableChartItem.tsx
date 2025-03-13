@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import type { DashboardItem, Position } from "@/types/dashboard"
-import ChartRenderer from "@/components/dashboard-creation/ChartRenderer"
+import KPIChartRender from "@/components/charts/KPIChartRender"
 import { kpiData } from "@/data/mockData"
 import { GRID } from "@/components/dashboard-creation/DashboardEditor"
 
@@ -195,7 +195,7 @@ export default function DraggableChartItem({
           </div>
         </CardHeader>
         <CardContent className="p-2 h-[calc(100%-40px)] w-full bg-background/50">
-          <ChartRenderer type={item.type} data={item.data} />
+          <KPIChartRender type={item.type} data={item.data} />
         </CardContent>
         <div
           onMouseDown={handleResizeStart}

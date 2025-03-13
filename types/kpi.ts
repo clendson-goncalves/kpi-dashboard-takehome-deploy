@@ -4,6 +4,9 @@ export type AccessLevel = "public" | "restricted"
 // Chart types supported by our dashboard
 export type ChartType = "bar" | "line" | "pie" 
 
+//color palette for charts
+export const COLORS = ["#091E42", "#0057B8", "#63AEE8", "#5B2C6F", "#B0BEC5"]
+
 // Chart data points
 export interface LineDataPoint {
   month?: string

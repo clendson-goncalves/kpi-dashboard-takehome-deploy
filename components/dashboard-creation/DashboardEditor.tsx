@@ -265,7 +265,7 @@ export default function DashboardEditor({ items, onUpdateItem, onRemoveItem, onA
                 getGridPosition={getGridPosition}
               />
             ))}
-          </div>
+          </div>          
         )}
       </CardContent>
     </Card>

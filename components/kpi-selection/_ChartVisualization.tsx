@@ -19,6 +19,8 @@ import {
   Cell,
 } from "recharts"
 
+import { COLORS } from "@/types/kpi"
+
 type ChartDataType = {
   lineData?: Record<string, string | number>[];
   barData?: Record<string, string | number>[];
@@ -30,7 +32,7 @@ export function renderChart(kpiId: string, chartType: string, height: number = 3
   
   const chartData = mockChartData[kpiId as keyof typeof mockChartData] as ChartDataType
 
-  const colors = ["#091E42", "#0057B8", "#63AEE8", "#5B2C6F", "#B0BEC5"];
+
 
   if (!chartData) return null
 
@@ -73,37 +75,11 @@ export function renderChart(kpiId: string, chartType: string, height: number = 3
                 <Bar
                   key={key}
                   dataKey={key}
-                  fill={colors[lineIndex]}
+                  fill={COLORS[lineIndex]}
                   name={key.charAt(0).toUpperCase() + key.slice(1)}
                 />
               ))}
           </BarChart>
-        </ResponsiveContainer>
-      )
-
-    case "line":
-      return (
-        <ResponsiveContainer {...commonProps}>
-          <LineChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#eee"/>
-            <XAxis dataKey="quarter" tick={{ fontSize: 10 }}/>
-            <YAxis tick={{ fontSize: 10 }} domain={[0, 'auto']} width={10}/>
-            <Tooltip contentStyle={{ fontSize: 12 }}/>
-            <Legend verticalAlign="bottom" height={80} wrapperStyle={{ fontSize: 12 }}/>
-            {Object.keys(data[0])
-              .filter(key => key !== 'quarter')
-              .map((key, lineIndex) => (
-                <Line
-                  key={key}
-                  type="monotone"
-                  dataKey={key}
-                  stroke={colors[lineIndex]}
-                  strokeWidth={2}
-                  dot={{ r: 3, fill: '#eee'}}
-                  name={key.charAt(0).toUpperCase() + key.slice(1)}
-                />
-              ))}
-          </LineChart>
         </ResponsiveContainer>
       )
 
@@ -125,7 +101,7 @@ export function renderChart(kpiId: string, chartType: string, height: number = 3
               {data.map((entry, index) => (
                 <Cell
                   key={index}
-                  fill={colors[index % colors.length]}
+                  fill={COLORS[index % COLORS.length]}
                 />
               ))}
             </Pie>
