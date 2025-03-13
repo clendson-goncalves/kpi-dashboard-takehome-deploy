@@ -4,14 +4,13 @@ import type React from "react"
 
 import { useState, useRef, useEffect } from "react"
 import { useDrag } from "react-dnd"
-import type { DragSourceMonitor, ConnectDragSource } from "react-dnd"
-import { Grip, X, Edit, Check } from "lucide-react"
+import type { DragSourceMonitor } from "react-dnd"
+import { Grip, X, Edit, Check, Move, Expand } from "lucide-react"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import type { DashboardItem, Position } from "@/types/dashboard"
-import ChartRenderer from "@/components/dashboard-creation/chart-renderer"
+import ChartRenderer from "@/components/dashboard-creation/ChartRenderer"
 import { kpiData } from "@/data/mockData"
 
 const GRID_SIZE = 25 // Grid size in pixels
@@ -72,7 +71,7 @@ export default function DraggableChartItem({
     end: (item, monitor) => {
       const dropResult = monitor.getDropResult()
       const didDrop = monitor.didDrop()
-      
+
       if (!didDrop && monitor.getClientOffset()) {
         const { x, y } = monitor.getClientOffset()!
         const position = getGridPosition(x, y)
@@ -93,7 +92,7 @@ export default function DraggableChartItem({
 
     setResizing(true)
     startResizePos.current = { x: e.clientX, y: e.clientY }
-    startSize.current = { 
+    startSize.current = {
       width: item.size.width * 4,
       height: item.size.height * 4
     }
@@ -150,8 +149,8 @@ export default function DraggableChartItem({
         zIndex: resizing ? 100 : 1,
       }}
     >
-      <Card className="w-full h-full relative bg-white/50 backdrop-blur-sm border-none shadow-lg hover:shadow-xl transition-shadow">
-        <CardHeader className="p-2 flex flex-row items-center justify-between border-b">
+      <Card className="w-full h-full relative gap-0 py-0 bg-white/50 backdrop-blur-sm border-none shadow-lg hover:shadow-xl transition-shadow">
+        <CardHeader className="flex flex-row items-center justify-between border-b">
           <div
             ref={dragRef}
             className="cursor-move flex items-center gap-2 flex-1 min-w-0"
@@ -169,9 +168,7 @@ export default function DraggableChartItem({
                 </Button>
               </form>
             ) : (
-              <div className="flex items-center flex-1 min-w-0">
-                <span className="text-xs font-medium truncate">{title}</span>
-              </div>
+              <div className="flex items-center flex-1 min-w-0 text-xs font-medium truncate">{title}</div>
             )}
           </div>
           <div className="flex items-center gap-1">
@@ -200,20 +197,18 @@ export default function DraggableChartItem({
           onMouseDown={handleResizeStart}
           className="absolute bottom-0 right-0 w-4 h-4 cursor-se-resize flex items-center justify-center text-muted-foreground/50 hover:text-muted-foreground"
         >
+
           <svg
-            width="12"
-            height="12"
-            viewBox="0 0 12 12"
+            viewBox="5 5 24 24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
-            <path
-              d="M11 1L1 11M7 11L11 11L11 7M4 11L1 11L1 8"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
+            <path d="M7 7L17 17" />
+            <path d="M17 7V17H7" />
           </svg>
         </div>
       </Card>

@@ -4,7 +4,7 @@ import { useRef, useCallback, useState } from "react"
 import { useDrop } from "react-dnd"
 import { Card, CardContent } from "@/components/ui/card"
 import type { DashboardItem, Position, ChartType } from "@/types/dashboard"
-import DraggableChartItem from "@/components/dashboard-creation/draggable-chart-item"
+import DraggableChartItem from "@/components/dashboard-creation/DraggableChartItem"
 import { LayoutGrid } from "lucide-react"
 
 const GRID_SIZE = 25 // Grid size in pixels

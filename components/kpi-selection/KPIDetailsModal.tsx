@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { mockChartData, availableChartTypes } from "@/data/mockData"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { renderChart } from "@/components/chart-visualization/ChartVisualization"
+import { renderChart } from "@/components/kpi-selection/ChartVisualization"
 
 interface KPIDetailsModalProps {
   kpi: KPI

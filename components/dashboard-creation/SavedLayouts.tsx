@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import type { DashboardLayout } from "@/types/dashboard"
-import { Eye, Trash2, LayoutDashboard, Edit } from "lucide-react"
-import ChartRenderer from "@/components/dashboard-creation/chart-renderer"
+import { Eye, Trash2, Edit } from "lucide-react"
+import ChartRenderer from "@/components/dashboard-creation/ChartRenderer"
 
 interface SavedLayoutsProps {
   layouts: DashboardLayout[]
@@ -34,13 +34,12 @@ export default function SavedLayouts({ layouts, onLoadLayout, onDeleteLayout }: 
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold pl-2">Saved Layouts</h2>
         <p className="text-xs text-muted-foreground pr-2">
-          {layouts.length} {layouts.length === 1 ? "layout" : "layouts"} saved.
+          {layouts.length} {layouts.length === 1 ? "layout" : "layouts"} saved
         </p>
       </div>
 
       {layouts.length === 0 ? (
         <div className="text-center py-8 bg-muted/10 rounded-lg border border-dashed">
-          <LayoutDashboard className="mx-auto h-12 w-12 text-muted-foreground" />
           <h3 className="text-lg font-medium">No saved layouts</h3>
           <p className="text-xs text-muted-foreground w-auto">
             Create and save your first dashboard layout to see it here.

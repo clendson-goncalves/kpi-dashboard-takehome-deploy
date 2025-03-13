@@ -46,7 +46,7 @@ export default function ChartRenderer({ type, data }: ChartRendererProps) {
   }
 
   const commonProps = {
-    margin: { top: 10, right: 10, left: 0, bottom: 5 },
+    margin: { top: 1, right: 1, left: 1, bottom: 1 },
     style: { fontSize: '10px' }
   }
 

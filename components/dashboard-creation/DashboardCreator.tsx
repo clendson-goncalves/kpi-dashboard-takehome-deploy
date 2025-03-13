@@ -3,9 +3,9 @@
 import { useState } from "react"
 import { DndProvider } from "react-dnd"
 import { HTML5Backend } from "react-dnd-html5-backend"
-import DashboardEditor from "@/components/dashboard-creation/dashboard-editor"
-import ChartPalette from "@/components/dashboard-creation/chart-palette"
-import SavedLayouts from "@/components/dashboard-creation/saved-layouts"
+import DashboardEditor from "@/components/dashboard-creation/DashboardEditor"
+import ChartPalette from "@/components/dashboard-creation/ChartPalette"
+import SavedLayouts from "@/components/dashboard-creation/SavedLayouts"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
@@ -71,7 +71,7 @@ export default function DashboardCreator() {
 
     const position = findNextAvailablePosition()
 
-    let data
+    let data: any[] = []
     switch (type) {
       case "line":
         data = chartData.lineData || []
@@ -120,7 +120,7 @@ export default function DashboardCreator() {
     // If occupied, find next available position
     const finalPosition = isOccupied ? findNextAvailablePosition() : position
     
-    let data
+    let data: any[] = []
     switch (type) {
       case "line":
         data = chartData.lineData || []

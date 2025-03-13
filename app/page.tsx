@@ -1,14 +1,9 @@
 "use client"
-
-import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { KPIList } from "@/components/kpi-selection/KPIList"
-import { Button } from "@/components/ui/button"
-import { PackagePlus, Search } from "lucide-react"
 import { useState } from "react"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { categories } from "@/data/mockData"
-import DashboardCreator from "@/components/dashboard-creation/dashboard-creator"
+import DashboardCreator from "@/components/dashboard-creation/DashboardCreator"
+import LibraryHeader from "@/components/library-dashboard/LibraryHeader"
 
 type TabType = "featured" | "kpi" | "layouts" | "storyboards"
 
@@ -19,48 +14,14 @@ export default function Home() {
 
   return (
     <div className="mx-auto bg-slate-50 w-full min-h-screen">
-
-      <div className="flex justify-end max-w-[1280px] mx-auto px-4 py-2">
-        <Button
-          variant="outline"
-          size="sm"
-          className="h-10 w-28 gap-2 bg-slate-500 text-white hover:bg-slate-700 hover:text-white border-0 rounded-md"
-        >
-          <PackagePlus className="h-4 w-4" />
-          Request
-        </Button>
-      </div>
+      <LibraryHeader 
+        searchQuery={searchQuery}
+        selectedCategory={selectedCategory}
+        onSearchChange={setSearchQuery}
+        onCategoryChange={setSelectedCategory}
+      />
 
       <div className="mx-auto max-w-[768px]">
-        <div className="mb-12">
-          <h1 className="text-5xl font-extrabold mx-auto py-2 text-center space-y-5">Library</h1>
-          <p className="text-slate-700 text-center">Browse for assets needed to report and present analysis.</p>
-        </div>
-
-        <div className="flex flex-col sm:flex-row items-center gap-4 px-8 mb-6">
-          <div className="relative flex-1 w-full">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 h-4 w-4" />
-            <Input
-              placeholder="Type to search..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-white w-full rounded-lg border-0 outline-none focus:ring-0 focus-visible:ring-0"
-            />
-          </div>
-          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-            <SelectTrigger className="w-full sm:w-[180px] bg-white rounded-lg border-0 outline-none focus:ring-0 focus-visible:ring-0">
-              <SelectValue placeholder="Select category" />
-            </SelectTrigger>
-            <SelectContent>
-              {categories.map((category) => (
-                <SelectItem key={category.id} value={category.id}>
-                  {category.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
         <div className="rounded-md px-4 py-3">
           <Tabs defaultValue="kpi" onValueChange={(value) => setActiveTab(value as TabType)}>
             <div className="flex justify-center items-center px-4 mb-6">
@@ -94,11 +55,8 @@ export default function Home() {
               </div>
             </TabsContent>
           </Tabs>
-
         </div>
-
       </div>
-
     </div>
   )
 }
