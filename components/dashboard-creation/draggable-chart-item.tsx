@@ -4,6 +4,7 @@ import type React from "react"
 
 import { useState, useRef, useEffect } from "react"
 import { useDrag } from "react-dnd"
+import type { DragSourceMonitor, ConnectDragSource } from "react-dnd"
 import { Grip, X, Edit, Check } from "lucide-react"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -11,7 +12,11 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import type { DashboardItem, Position } from "@/types/dashboard"
 import ChartRenderer from "@/components/dashboard-creation/chart-renderer"
-import { getKpiById } from "@/services/kpi-data"
+import { kpiData } from "@/data/mockData"
+
+const GRID_SIZE = 25 // Grid size in pixels
+const MIN_WIDTH_UNITS = 4 // Minimum width in grid units (100px)
+const MIN_HEIGHT_UNITS = 4 // Minimum height in grid units (100px)
 
 interface DraggableChartItemProps {
   item: DashboardItem
@@ -33,49 +38,54 @@ export default function DraggableChartItem({
   const [editingTitle, setEditingTitle] = useState(false)
   const [title, setTitle] = useState(item.title)
   const [resizing, setResizing] = useState(false)
-  const [currentSize, setCurrentSize] = useState(item.size)
+  const [currentSize, setCurrentSize] = useState({
+    width: item.size.width * 4,
+    height: item.size.height * 4
+  })
   const startResizePos = useRef({ x: 0, y: 0 })
   const startSize = useRef({ width: 0, height: 0 })
   const itemRef = useRef<HTMLDivElement>(null)
-  const kpi = getKpiById(item.kpiId)
+  const dragRef = useRef<HTMLDivElement>(null)
+  const kpi = kpiData.find(k => k.id === item.kpiId)
 
   useEffect(() => {
     setTitle(item.title)
   }, [item.title])
 
   useEffect(() => {
-    setCurrentSize(item.size)
+    setCurrentSize({
+      width: item.size.width * 4,
+      height: item.size.height * 4
+    })
   }, [item.size])
 
-  // Configure drag behavior
-  const [{ isDragging }, drag, dragPreview] = useDrag(
-    () => ({
-      type: "DASHBOARD_ITEM",
-      item: () => ({
-        id: item.id,
-        type: "move",
-        originalPosition: item.position,
-        width: item.size.width,
-        height: item.size.height,
-      }),
-      collect: (monitor) => ({
-        isDragging: !!monitor.isDragging(),
-      }),
-      end: (draggedItem, monitor) => {
-        const didDrop = monitor.didDrop()
-
-        // If the item wasn't dropped in a valid drop target, we can handle it here
-        if (!didDrop) {
-          const clientOffset = monitor.getClientOffset()
-          if (clientOffset) {
-            const position = getGridPosition(clientOffset.x, clientOffset.y)
-            onMove(item.id, position)
-          }
-        }
-      },
+  const [{ isDragging }, drag] = useDrag<
+    { id: string; type: string },
+    void,
+    { isDragging: boolean }
+  >(() => ({
+    type: "CHART",
+    item: { id: item.id, type: item.type },
+    collect: (monitor: DragSourceMonitor) => ({
+      isDragging: monitor.isDragging(),
     }),
-    [item.id, item.position, item.size, onMove, getGridPosition],
-  )
+    end: (item, monitor) => {
+      const dropResult = monitor.getDropResult()
+      const didDrop = monitor.didDrop()
+      
+      if (!didDrop && monitor.getClientOffset()) {
+        const { x, y } = monitor.getClientOffset()!
+        const position = getGridPosition(x, y)
+        onMove(item.id, position)
+      }
+    }
+  }), [onMove, getGridPosition])
+
+  useEffect(() => {
+    if (dragRef.current) {
+      drag(dragRef.current)
+    }
+  }, [drag])
 
   const handleResizeStart = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -83,18 +93,21 @@ export default function DraggableChartItem({
 
     setResizing(true)
     startResizePos.current = { x: e.clientX, y: e.clientY }
-    startSize.current = { width: item.size.width, height: item.size.height }
+    startSize.current = { 
+      width: item.size.width * 4,
+      height: item.size.height * 4
+    }
 
     const handleMouseMove = (e: MouseEvent) => {
       if (!resizing) return
 
-      // Calculate the delta in grid units (100px per grid unit)
-      const deltaX = Math.floor((e.clientX - startResizePos.current.x) / 100)
-      const deltaY = Math.floor((e.clientY - startResizePos.current.y) / 100)
+      // Calculate the delta in grid units (25px per grid unit)
+      const deltaX = Math.floor((e.clientX - startResizePos.current.x) / GRID_SIZE)
+      const deltaY = Math.floor((e.clientY - startResizePos.current.y) / GRID_SIZE)
 
       // Calculate new width and height, ensuring minimum size
-      const newWidth = Math.max(1, startSize.current.width + deltaX)
-      const newHeight = Math.max(1, startSize.current.height + deltaY)
+      const newWidth = Math.max(MIN_WIDTH_UNITS, startSize.current.width + deltaX)
+      const newHeight = Math.max(MIN_HEIGHT_UNITS, startSize.current.height + deltaY)
 
       // Update local state for visual feedback during resize
       setCurrentSize({ width: newWidth, height: newHeight })
@@ -102,9 +115,9 @@ export default function DraggableChartItem({
 
     const handleMouseUp = () => {
       if (resizing) {
-        // Only update if the size has actually changed
-        if (currentSize.width !== item.size.width || currentSize.height !== item.size.height) {
-          onResize(item.id, currentSize.width, currentSize.height)
+        // Convert back to 100px units when updating parent
+        if (currentSize.width !== item.size.width * 4 || currentSize.height !== item.size.height * 4) {
+          onResize(item.id, Math.floor(currentSize.width / 4), Math.floor(currentSize.height / 4))
         }
         setResizing(false)
       }
@@ -117,91 +130,92 @@ export default function DraggableChartItem({
     document.addEventListener("mouseup", handleMouseUp)
   }
 
-  const handleTitleSubmit = () => {
+  const handleTitleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
     onUpdateTitle(item.id, title)
     setEditingTitle(false)
   }
 
   return (
     <div
-      ref={dragPreview}
-      className={`absolute transition-all ${isDragging ? "opacity-50 ring-2 ring-primary" : "opacity-100"}`}
+      ref={itemRef}
       style={{
-        left: `${item.position.x * 100}px`,
-        top: `${item.position.y * 100}px`,
-        width: `${currentSize.width * 100}px`,
-        height: `${currentSize.height * 100}px`,
-        zIndex: isDragging || resizing ? 100 : 1,
+        position: 'absolute',
+        left: `${item.position.x * GRID_SIZE * 4}px`,
+        top: `${item.position.y * GRID_SIZE * 4}px`,
+        width: `${currentSize.width * GRID_SIZE}px`,
+        height: `${currentSize.height * GRID_SIZE}px`,
+        opacity: isDragging ? 0.5 : 1,
+        transition: 'opacity 0.2s',
+        zIndex: resizing ? 100 : 1,
       }}
     >
-      <Card className="w-full h-full overflow-hidden shadow-sm py-1">
-        <CardHeader className="flex flex-row items-center px-2 bg-muted/10">
-        <div className="flex flex-row p-0">
-            <Button
-              size="icon"
-              variant="ghost"
-              className="h-3 w-3 hover:bg-background hover:text-destructive"
-              onClick={() => onRemove(item.id)}
-            >
-              <X className="h-3 w-3" />
-            </Button>
-          </div>
-          <div ref={drag} className="flex-1 flex items-center cursor-move px-2" data-item-id={item.id}>
-            <Grip className="h-4 w-4 text-muted-foreground" />
-            <Button
-              size="icon"
-              variant="ghost"
-              className="h-7 w-7 hover:bg-background"
-              onClick={() => setEditingTitle(true)}
-            >
-              <Edit className="h-3 w-3" />
-            </Button>
-
+      <Card className="w-full h-full relative bg-white/50 backdrop-blur-sm border-none shadow-lg hover:shadow-xl transition-shadow">
+        <CardHeader className="p-2 flex flex-row items-center justify-between border-b">
+          <div
+            ref={dragRef}
+            className="cursor-move flex items-center gap-2 flex-1 min-w-0"
+          >
+            <Grip className="h-4 w-4 text-muted-foreground/50" />
             {editingTitle ? (
-              <div className="flex items-center space-x-1">
+              <form onSubmit={handleTitleSubmit} className="flex items-center gap-1 flex-1 min-w-0">
                 <Input
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="h-7 text-xs"
-                  autoFocus
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") handleTitleSubmit()
-                  }}
+                  className="h-6 text-xs bg-background"
                 />
-                <Button size="icon" variant="ghost" className="h-7 w-7" onClick={handleTitleSubmit}>
+                <Button type="submit" size="icon" variant="ghost" className="h-6 w-6">
                   <Check className="h-4 w-4" />
                 </Button>
-              </div>
+              </form>
             ) : (
-              <div className="text-xs font-medium truncate">
-                {item.title}
+              <div className="flex items-center flex-1 min-w-0">
+                <span className="text-xs font-medium truncate">{title}</span>
               </div>
             )}
           </div>
-        </CardHeader>
-        <CardContent className="p-3 pt-0 h-[calc(100%-32px)]">
-          <ChartRenderer type={item.type} data={item.data} />
-          <div
-            className="absolute bottom-0 right-0 w-10 h-10 cursor-se-resize flex items-center justify-center bg-background/50 hover:bg-background/80 rounded-tl-md border-t border-l transition-colors"
-            onMouseDown={handleResizeStart}
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="text-muted-foreground"
+          <div className="flex items-center gap-1">
+            <Button
+              onClick={() => setEditingTitle(true)}
+              size="icon"
+              variant="ghost"
+              className="h-6 w-6"
             >
-              <path
-                d="M22 22L12 22M22 22L22 12M22 22L18.5 18.5M22 22L15 15M22 22L8 8"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-            </svg>
+              <Edit className="h-4 w-4" />
+            </Button>
+            <Button
+              onClick={() => onRemove(item.id)}
+              size="icon"
+              variant="ghost"
+              className="h-6 w-6"
+            >
+              <X className="h-4 w-4" />
+            </Button>
           </div>
+        </CardHeader>
+        <CardContent className="p-2 h-[calc(100%-40px)] bg-background/50">
+          <ChartRenderer type={item.type} data={item.data} />
         </CardContent>
+        <div
+          onMouseDown={handleResizeStart}
+          className="absolute bottom-0 right-0 w-4 h-4 cursor-se-resize flex items-center justify-center text-muted-foreground/50 hover:text-muted-foreground"
+        >
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 12 12"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M11 1L1 11M7 11L11 11L11 7M4 11L1 11L1 8"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
       </Card>
     </div>
   )

@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import type { ChartType } from "@/types/dashboard"
-import { getAllKpis } from "@/services/kpi-data"
+import { kpiData } from "@/data/mockData"
 
 interface ChartPaletteProps {
   onAddChart: (type: ChartType, kpiId: string) => void
@@ -17,7 +17,6 @@ interface ChartPaletteProps {
 
 export default function ChartPalette({ onAddChart }: ChartPaletteProps) {
   const [selectedKpi, setSelectedKpi] = useState<string>("")
-  const kpis = getAllKpis()
 
   const handleKpiChange = (value: string) => {
     setSelectedKpi(value)
@@ -35,7 +34,7 @@ export default function ChartPalette({ onAddChart }: ChartPaletteProps) {
               <SelectValue placeholder="Choose a KPI" />
             </SelectTrigger>
             <SelectContent>
-              {kpis.map((kpi) => (
+              {kpiData.map((kpi) => (
                 <SelectItem key={kpi.id} value={kpi.id}>
                   {kpi.name} ({kpi.category})
                 </SelectItem>

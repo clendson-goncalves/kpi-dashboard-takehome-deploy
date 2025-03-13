@@ -23,7 +23,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import type { ChartType, DashboardItem, DashboardLayout, Position } from "@/types/dashboard"
-import { getKpiById, getKpiDataForChart } from "@/services/kpi-data"
+import { kpiData, mockChartData } from "@/data/mockData"
 
 export default function DashboardCreator() {
   const [items, setItems] = useState<DashboardItem[]>([])
@@ -63,11 +63,28 @@ export default function DashboardCreator() {
   }
 
   const handleAddChart = (type: ChartType, kpiId: string) => {
-    const kpi = getKpiById(kpiId)
+    const kpi = kpiData.find(k => k.id === kpiId)
     if (!kpi) return
 
-    const chartData = getKpiDataForChart(kpiId, type)
+    const chartData = mockChartData[kpiId as keyof typeof mockChartData]
+    if (!chartData) return
+
     const position = findNextAvailablePosition()
+
+    let data
+    switch (type) {
+      case "line":
+        data = chartData.lineData || []
+        break
+      case "bar":
+        data = chartData.barData || []
+        break
+      case "pie":
+        data = chartData.pieData || []
+        break
+      default:
+        data = []
+    }
 
     const newItem: DashboardItem = {
       id: `item-${Date.now()}`,
@@ -76,7 +93,7 @@ export default function DashboardCreator() {
       size: { width: 2, height: 2 },
       title: `${kpi.name} (${type})`,
       kpiId,
-      data: chartData,
+      data,
     }
 
     setItems([...items, newItem])
@@ -84,8 +101,11 @@ export default function DashboardCreator() {
   }
 
   const handleAddChartAtPosition = (type: ChartType, kpiId: string, position: Position) => {
-    const kpi = getKpiById(kpiId)
+    const kpi = kpiData.find(k => k.id === kpiId)
     if (!kpi) return
+
+    const chartData = mockChartData[kpiId as keyof typeof mockChartData]
+    if (!chartData) return
 
     // Check if position is already occupied
     const isOccupied = items.some((item) => {
@@ -99,7 +119,21 @@ export default function DashboardCreator() {
 
     // If occupied, find next available position
     const finalPosition = isOccupied ? findNextAvailablePosition() : position
-    const chartData = getKpiDataForChart(kpiId, type)
+    
+    let data
+    switch (type) {
+      case "line":
+        data = chartData.lineData || []
+        break
+      case "bar":
+        data = chartData.barData || []
+        break
+      case "pie":
+        data = chartData.pieData || []
+        break
+      default:
+        data = []
+    }
 
     const newItem: DashboardItem = {
       id: `item-${Date.now()}`,
@@ -108,7 +142,7 @@ export default function DashboardCreator() {
       size: { width: 2, height: 2 },
       title: `${kpi.name} (${type})`,
       kpiId,
-      data: chartData,
+      data,
     }
 
     setItems([...items, newItem])

@@ -7,6 +7,9 @@ import type { DashboardItem, Position, ChartType } from "@/types/dashboard"
 import DraggableChartItem from "@/components/dashboard-creation/draggable-chart-item"
 import { LayoutGrid } from "lucide-react"
 
+const GRID_SIZE = 25 // Grid size in pixels
+const GRID_UNITS = 4 // Number of grid units per 100px
+
 interface DashboardEditorProps {
   items: DashboardItem[]
   onUpdateItem: (item: DashboardItem) => void
@@ -23,10 +26,10 @@ export default function DashboardEditor({ items, onUpdateItem, onRemoveItem, onA
     if (!gridRef.current) return { x: 0, y: 0 }
 
     const rect = gridRef.current.getBoundingClientRect()
-    const x = Math.floor((clientX - rect.left) / 100)
-    const y = Math.floor((clientY - rect.top) / 100)
+    const x = Math.floor((clientX - rect.left) / (GRID_SIZE * GRID_UNITS))
+    const y = Math.floor((clientY - rect.top) / (GRID_SIZE * GRID_UNITS))
 
-    return { x: Math.max(0, x), y: Math.max(0, y) }
+    return { x, y }
   }, [])
 
   // Check if a position would cause a collision with existing items
@@ -71,15 +74,20 @@ export default function DashboardEditor({ items, onUpdateItem, onRemoveItem, onA
 
         // If it's an existing chart being moved
         if (item.id) {
-          const width = item.width || 2
-          const height = item.height || 2
+          const existingItem = items.find(i => i.id === item.id)
+          if (!existingItem) return undefined
 
           // Check for collisions with other items
-          const hasCollision = checkCollision(position, width, height, item.id)
+          const hasCollision = checkCollision(
+            position,
+            existingItem.size.width,
+            existingItem.size.height,
+            item.id
+          )
 
           if (!hasCollision) {
             onUpdateItem({
-              ...items.find((i) => i.id === item.id)!,
+              ...existingItem,
               position,
             })
           }
@@ -102,7 +110,12 @@ export default function DashboardEditor({ items, onUpdateItem, onRemoveItem, onA
     const item = items.find((item) => item.id === id)
     if (item) {
       // Check for collisions with other items
-      const hasCollision = checkCollision(position, item.size.width, item.size.height, id)
+      const hasCollision = checkCollision(
+        position,
+        item.size.width,
+        item.size.height,
+        id
+      )
 
       if (!hasCollision) {
         onUpdateItem({ ...item, position })
@@ -114,7 +127,12 @@ export default function DashboardEditor({ items, onUpdateItem, onRemoveItem, onA
     const item = items.find((item) => item.id === id)
     if (item) {
       // Check for collisions with the new size
-      const hasCollision = checkCollision(item.position, width, height, id)
+      const hasCollision = checkCollision(
+        item.position,
+        width,
+        height,
+        id
+      )
 
       if (!hasCollision) {
         onUpdateItem({
@@ -134,14 +152,13 @@ export default function DashboardEditor({ items, onUpdateItem, onRemoveItem, onA
 
   // Calculate grid dimensions based on items
   const calculateGridDimensions = () => {
-    if (items.length === 0) return { width: 10, height: 6 } // Default size
+    if (items.length === 0) return { width: 32, height: 24 } // Default size (8 * 4 grid units)
 
-    const maxX = Math.max(...items.map((item) => item.position.x + item.size.width))
     const maxY = Math.max(...items.map((item) => item.position.y + item.size.height))
 
     return {
-      width: Math.max(10, maxX + 2), // Add some extra space
-      height: Math.max(6, maxY + 2),
+      width: 32, // Fixed width of 8 columns (32 grid units)
+      height: Math.max(24, maxY * GRID_UNITS + GRID_UNITS),
     }
   }
 
@@ -170,11 +187,13 @@ export default function DashboardEditor({ items, onUpdateItem, onRemoveItem, onA
               drop(el)
               gridRef.current = el
             }}
-            className="relative w-full border border-dashed rounded-md overflow-auto bg-muted/5"
+            className="relative border border-dashed rounded-md overflow-auto bg-muted/5"
             style={{
-              height: `${Math.max(600, height * 100)}px`,
-              width: `${width * 100}px`,
-              backgroundSize: "100px 100px",
+              height: `${Math.max(600, height * GRID_SIZE)}px`,
+              width: `${width * GRID_SIZE}px`,
+              minWidth: '100%',
+              maxWidth: '100%',
+              backgroundSize: `${GRID_SIZE}px ${GRID_SIZE}px`,
               backgroundImage:
                 "linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px)",
             }}
@@ -184,10 +203,10 @@ export default function DashboardEditor({ items, onUpdateItem, onRemoveItem, onA
               <div
                 className="absolute border-2 border-primary rounded-md pointer-events-none opacity-50 bg-primary/10"
                 style={{
-                  left: `${dropIndicator.x * 100}px`,
-                  top: `${dropIndicator.y * 100}px`,
-                  width: "200px",
-                  height: "200px",
+                  left: `${dropIndicator.x * GRID_SIZE * GRID_UNITS}px`,
+                  top: `${dropIndicator.y * GRID_SIZE * GRID_UNITS}px`,
+                  width: `${2 * GRID_SIZE * GRID_UNITS}px`,
+                  height: `${2 * GRID_SIZE * GRID_UNITS}px`,
                 }}
               />
             )}
