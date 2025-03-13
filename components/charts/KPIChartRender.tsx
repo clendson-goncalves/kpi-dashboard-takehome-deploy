@@ -3,6 +3,8 @@
 import { ResponsiveContainer } from "recharts"
 
 import KPILineChart from "@/components/charts/KPILineChart"
+import KPIBarChart from "@/components/charts/KPIBarChart"
+import KPIPieChart from "@/components/charts/KPIPieChart"
 
 interface KPIChartRenderProps {
   type: string
@@ -22,7 +24,7 @@ export default function KPIChartRender({ type, data }: KPIChartRenderProps) {
     switch (type) {
       case "bar":
         return (
-          <div>in construction</div>
+          <KPIBarChart data={data} />
         )
       case "line":
         return (
@@ -30,7 +32,7 @@ export default function KPIChartRender({ type, data }: KPIChartRenderProps) {
         )
       case "pie":
         return (
-          <div>in construction</div>
+          <KPIPieChart data={data} />
         )
       default:
         return (

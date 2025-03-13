@@ -60,29 +60,6 @@ export function renderChart(kpiId: string, chartType: string, height: number = 3
   }
 
   switch (chartType) {
-    case "bar":
-      return (
-        <ResponsiveContainer {...commonProps}>
-          <BarChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-            <XAxis dataKey="quarter"  domain={[0, 'auto']} tick={{ fontSize: 10 }} />
-            <YAxis tick={{ fontSize: 10 }} width={10}/>
-            <Tooltip contentStyle={{ fontSize: 12 }}/>
-            <Legend verticalAlign="bottom" height={80} wrapperStyle={{ fontSize: 12 }}/>
-            {Object.keys(data[0])
-              .filter(key => key !== 'quarter')
-              .map((key, lineIndex) => (
-                <Bar
-                  key={key}
-                  dataKey={key}
-                  fill={COLORS[lineIndex]}
-                  name={key.charAt(0).toUpperCase() + key.slice(1)}
-                />
-              ))}
-          </BarChart>
-        </ResponsiveContainer>
-      )
-
     case "pie":
       return (
         <ResponsiveContainer {...commonProps}>
