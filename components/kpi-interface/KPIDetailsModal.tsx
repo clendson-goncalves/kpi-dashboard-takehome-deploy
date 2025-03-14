@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import type { KPI } from "@/types/kpi"
 import type { ChartType } from "@/types/dashboard"
 import { Bookmark, X, Link2, Grid, Info, BarChart as BarChartIcon, LineChart as LineChartIcon, PieChart as PieChartIcon } from "lucide-react"
@@ -43,6 +43,27 @@ type ChartData = {
  */
 export function KPIDetailsModal({ kpi, isOpen, onClose }: KPIDetailsModalProps) {
   const [selectedChart, setSelectedChart] = useState<ChartType>(availableChartTypes[kpi.id][0])
+
+  useEffect(() => {
+    if (isOpen) {
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth
+      document.body.style.overflow = "hidden"
+      document.body.style.paddingRight = `${scrollbarWidth}px`
+      console.log("modal-open")
+    } else {
+      document.body.style.overflow = ""
+      document.body.style.paddingRight = ""
+      console.log("modal-close")
+    }
+
+    return () => {
+      document.body.style.overflow = ""
+      document.body.style.paddingRight = ""
+    }
+  
+
+  }, [isOpen])
+
 
   if (!isOpen) return null
 

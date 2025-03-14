@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "KPI Dashboard",
-  description: "Interactive KPI Dashboard",
+  description: "Browse for assets needed to report and present analysis.",
 };
 
 export default function RootLayout({

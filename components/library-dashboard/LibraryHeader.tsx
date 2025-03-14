@@ -48,11 +48,11 @@ export default function LibraryHeader({
 
             <div className="mx-auto max-w-[768px]">
                 <div className="mb-12">
-                    <h1 className="text-5xl font-extrabold mx-auto py-2 text-center space-y-5">Library</h1>
+                    <h1 className="text-5xl font-extrabold mx-auto py-2 text-center mb-6">Library</h1>
                     <p className="text-slate-700 text-center">Browse for assets needed to report and present analysis.</p>
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-center gap-4 px-8 mb-6">
+                <div className="flex flex-col sm:flex-row items-center gap-4 px-8 mb-3">
                     <div className="relative flex-1 w-full">
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 h-4 w-4" />
                         <Input

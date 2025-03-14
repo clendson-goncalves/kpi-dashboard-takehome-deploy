@@ -4,6 +4,7 @@ import { KPIList } from "@/components/kpi-interface/KPIList"
 import { useState } from "react"
 import DashboardCreator from "@/components/dashboard-creation/DashboardCreator"
 import LibraryHeader from "@/components/library-dashboard/LibraryHeader"
+import LibraryFeatured from "@/components/library-dashboard/LibraryFeatured"
 
 /**
  * Home component - Main application page
@@ -25,7 +26,7 @@ export default function Home() {
       />
 
       <div className="mx-auto max-w-[768px]">
-        <div className="rounded-md px-4 py-3">
+        <div className="rounded-md px-4">
           <Tabs defaultValue="kpi">
             <div className="flex justify-center items-center px-4 mb-6">
               <TabsList className="w-full rounded-md">
@@ -37,9 +38,7 @@ export default function Home() {
             </div>
 
             <TabsContent value="featured" className="px-4 py-8 space-y-10">
-              <div className="text-center text-muted-foreground py-8">
-                Featured content coming soon.
-              </div>
+               <LibraryFeatured />
             </TabsContent>
 
             <TabsContent value="kpi" className="px-4 py-8 space-y-10">
