@@ -14,25 +14,40 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 
+/**
+ * Props for the KPIList component
+ */
 interface KPIListProps {
+  /** Current search query to filter KPIs */
   searchQuery: string
+  /** Selected category to filter KPIs */
   selectedCategory: string
 }
 
+/**
+ * KPIList component
+ * Displays a grid of KPI cards with filtering and access request functionality
+ */
 export function KPIList({ searchQuery, selectedCategory }: KPIListProps) {
-  const { kpis, requestAccess } =
-    useKpiStore()
+  const { kpis, requestAccess } = useKpiStore()
   const [selectedKpiId, setSelectedKpiId] = useState<string | null>(null)
   const [accessReason, setAccessReason] = useState("")
   const [dialogOpen, setDialogOpen] = useState(false)
 
+  /**
+   * Handles initiating the access request process for a KPI
+   * Opens the access request dialog
+   * @param kpiId - The ID of the KPI to request access for
+   */
   const handleRequestAccess = (kpiId: string) => {
     setSelectedKpiId(kpiId)
     setDialogOpen(true)
-
-    console.log(kpiId)
   }
 
+  /**
+   * Handles submitting the access request
+   * Calls the requestAccess function from the store if reason is provided
+   */
   const handleSubmitRequest = () => {
     if (selectedKpiId && accessReason) {
       requestAccess(selectedKpiId, accessReason)
@@ -41,6 +56,7 @@ export function KPIList({ searchQuery, selectedCategory }: KPIListProps) {
     }
   }
 
+  // Filter KPIs based on search query and category
   const filteredKPIs = kpis.filter((kpi) => {
     const matchesSearch = kpi.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       kpi.description.toLowerCase().includes(searchQuery.toLowerCase())

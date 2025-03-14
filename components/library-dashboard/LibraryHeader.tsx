@@ -6,6 +6,14 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { categories } from "@/data/mockData"
 
+/**
+ * Props interface for the LibraryHeader component
+ * @interface LibraryHeaderProps
+ * @property {string} searchQuery - Current search query value
+ * @property {string} selectedCategory - Currently selected category ID
+ * @property {function} onSearchChange - Callback function when search query changes
+ * @property {function} onCategoryChange - Callback function when category selection changes
+ */
 interface LibraryHeaderProps {
     searchQuery: string
     selectedCategory: string
@@ -13,6 +21,11 @@ interface LibraryHeaderProps {
     onCategoryChange: (category: string) => void
 }
 
+/**
+ * Header component for the library dashboard with search and category filtering
+ * @param {LibraryHeaderProps} props - Component props
+ * @returns {JSX.Element} Rendered header component
+ */
 export default function LibraryHeader({ 
     searchQuery, 
     selectedCategory, 

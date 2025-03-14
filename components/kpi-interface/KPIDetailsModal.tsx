@@ -10,18 +10,37 @@ import { mockChartData, availableChartTypes } from "@/data/mockData"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import KPIChartRender from "@/components/charts/KPIChartRender"
 
+/**
+ * Props interface for the KPIDetailsModal component
+ * @interface KPIDetailsModalProps
+ * @property {KPI} kpi - The KPI object containing all KPI details
+ * @property {boolean} isOpen - Controls the visibility of the modal
+ * @property {function} onClose - Callback function to close the modal
+ */
 interface KPIDetailsModalProps {
   kpi: KPI
   isOpen: boolean
   onClose: () => void
 }
 
+/**
+ * Type definition for chart data structure
+ * @typedef {Object} ChartData
+ * @property {Object[]} [lineData] - Data for line chart visualization
+ * @property {Object[]} [barData] - Data for bar chart visualization
+ * @property {Object[]} [pieData] - Data for pie chart visualization
+ */
 type ChartData = {
   lineData?: { [key: string]: string | number }[]
   barData?: { [key: string]: string | number }[]
   pieData?: { [key: string]: string | number }[]
 }
 
+/**
+ * Modal component that displays detailed information about a KPI, including charts and metrics
+ * @param {KPIDetailsModalProps} props - Component props
+ * @returns {JSX.Element | null} Rendered component or null if modal is closed
+ */
 export function KPIDetailsModal({ kpi, isOpen, onClose }: KPIDetailsModalProps) {
   const [selectedChart, setSelectedChart] = useState<ChartType>(availableChartTypes[kpi.id][0])
 
@@ -29,6 +48,10 @@ export function KPIDetailsModal({ kpi, isOpen, onClose }: KPIDetailsModalProps) 
 
   const chartData = mockChartData[kpi.id as keyof typeof mockChartData] as ChartData
 
+  /**
+   * Returns the appropriate chart data based on the selected chart type
+   * @returns {Array} Array of data points for the selected chart type
+   */
   const getChartData = () => {
     switch (selectedChart.toLowerCase()) {
       case "line":

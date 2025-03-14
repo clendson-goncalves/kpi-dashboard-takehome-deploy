@@ -24,7 +24,13 @@ import {
 import type { ChartType, DashboardItem, DashboardLayout, Position } from "@/types/dashboard"
 import { kpiData, mockChartData } from "@/data/mockData"
 
+/**
+ * DashboardCreator component
+ * Main component for creating and managing KPI dashboards
+ * Handles chart placement, layout management, and dashboard interactions
+ */
 export default function DashboardCreator() {
+  // Dashboard state
   const [items, setItems] = useState<DashboardItem[]>([])
   const [layouts, setLayouts] = useState<DashboardLayout[]>([])
   const [currentLayout, setCurrentLayout] = useState<DashboardLayout | null>(null)
@@ -32,11 +38,13 @@ export default function DashboardCreator() {
   const [showNewLayoutConfirm, setShowNewLayoutConfirm] = useState(false)
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
 
-  // Find the next available position in the grid
+  /**
+   * Finds the next available position in the grid for a new chart
+   * Avoids overlapping with existing charts
+   */
   const findNextAvailablePosition = (): Position => {
     if (items.length === 0) return { x: 0, y: 0 }
 
-    // Find all occupied positions
     const occupiedPositions = new Set<string>()
     items.forEach((item) => {
       for (let x = item.position.x; x < item.position.x + item.size.width; x++) {
@@ -46,20 +54,24 @@ export default function DashboardCreator() {
       }
     })
 
-    // Find the bottom-most item
     const maxY = Math.max(...items.map((item) => item.position.y + item.size.height))
 
-    // Try positions at the next row
     for (let x = 0; x < 10; x++) {
       if (!occupiedPositions.has(`${x},${maxY}`)) {
         return { x, y: maxY }
       }
     }
 
-    // If all positions in the next row are occupied, place at the beginning of the row after
     return { x: 0, y: maxY + 1 }
   }
 
+  /**
+   * Checks if a chart position would collide with existing charts
+   * @param position - The position to check
+   * @param width - Width of the chart
+   * @param height - Height of the chart
+   * @param excludeId - ID of the chart to exclude from collision check
+   */
   const checkCollision = (
     position: Position,
     width: number,
@@ -77,6 +89,11 @@ export default function DashboardCreator() {
     })
   }
 
+  /**
+   * Adds a new chart to the dashboard
+   * @param type - Type of chart to add
+   * @param kpiId - ID of the KPI to visualize
+   */
   const handleAddChart = (type: ChartType, kpiId: string) => {
     const kpi = kpiData.find(k => k.id === kpiId)
     if (!kpi) return
@@ -85,21 +102,7 @@ export default function DashboardCreator() {
     if (!chartData) return
 
     const position = findNextAvailablePosition()
-
-    let data: any[] = []
-    switch (type) {
-      case "line":
-        data = chartData.lineData || []
-        break
-      case "bar":
-        data = chartData.barData || []
-        break
-      case "pie":
-        data = chartData.pieData || []
-        break
-      default:
-        data = []
-    }
+    const data = getChartData(type, chartData)
 
     const newItem: DashboardItem = {
       id: `item-${Date.now()}`,
@@ -116,6 +119,26 @@ export default function DashboardCreator() {
     setHasUnsavedChanges(true)
   }
 
+  /**
+   * Gets the appropriate data for a chart type
+   * @param type - Type of chart
+   * @param chartData - Available chart data
+   */
+  const getChartData = (type: ChartType, chartData: any) => {
+    switch (type) {
+      case "line": return chartData.lineData || []
+      case "bar": return chartData.barData || []
+      case "pie": return chartData.pieData || []
+      default: return []
+    }
+  }
+
+  /**
+   * Adds a new chart at a specific position
+   * @param type - Type of chart to add
+   * @param kpiId - ID of the KPI to visualize
+   * @param position - Position to place the chart
+   */
   const handleAddChartAtPosition = (type: ChartType, kpiId: string, position: Position) => {
     const kpi = kpiData.find(k => k.id === kpiId)
     if (!kpi) return
@@ -123,7 +146,6 @@ export default function DashboardCreator() {
     const chartData = mockChartData[kpiId as keyof typeof mockChartData]
     if (!chartData) return
 
-    // Check if position is already occupied
     const isOccupied = items.some((item) => {
       return (
         position.x < item.position.x + item.size.width &&
@@ -133,23 +155,8 @@ export default function DashboardCreator() {
       )
     })
 
-    // If occupied, find next available position
     const finalPosition = isOccupied ? findNextAvailablePosition() : position
-
-    let data: any[] = []
-    switch (type) {
-      case "line":
-        data = chartData.lineData || []
-        break
-      case "bar":
-        data = chartData.barData || []
-        break
-      case "pie":
-        data = chartData.pieData || []
-        break
-      default:
-        data = []
-    }
+    const data = getChartData(type, chartData)
 
     const newItem: DashboardItem = {
       id: `item-${Date.now()}`,
@@ -165,6 +172,10 @@ export default function DashboardCreator() {
     setHasUnsavedChanges(true)
   }
 
+  /**
+   * Updates an existing chart's properties
+   * @param updatedItem - The updated chart item
+   */
   const handleUpdateItem = (updatedItem: DashboardItem) => {
     const hasCollision = checkCollision(
       updatedItem.position,
@@ -173,24 +184,26 @@ export default function DashboardCreator() {
       updatedItem.id
     )
 
-    if (hasCollision) {
-      // If there's a collision, don't update the position/size
-      return
+    if (!hasCollision) {
+      setItems(items.map((item) => (item.id === updatedItem.id ? updatedItem : item)))
+      setHasUnsavedChanges(true)
     }
-
-    setItems(items.map((item) => (item.id === updatedItem.id ? updatedItem : item)))
-    setHasUnsavedChanges(true)
   }
 
+  /**
+   * Removes a chart from the dashboard
+   * @param id - ID of the chart to remove
+   */
   const handleRemoveItem = (id: string) => {
     setItems(items.filter((item) => item.id !== id))
     setHasUnsavedChanges(true)
   }
 
+  /**
+   * Saves the current dashboard layout
+   */
   const handleSaveLayout = () => {
-    if (!layoutName.trim()) {
-      return
-    }
+    if (!layoutName.trim()) return
 
     const newLayout: DashboardLayout = {
       id: currentLayout?.id || `layout-${Date.now()}`,
@@ -200,30 +213,32 @@ export default function DashboardCreator() {
       updatedAt: new Date().toISOString(),
     }
 
-    let updatedLayouts: DashboardLayout[]
-
-    if (currentLayout) {
-      updatedLayouts = layouts.map((layout) => (layout.id === currentLayout.id ? newLayout : layout))
-    } else {
-      updatedLayouts = [...layouts, newLayout]
-    }
+    const updatedLayouts = currentLayout
+      ? layouts.map((layout) => (layout.id === currentLayout.id ? newLayout : layout))
+      : [...layouts, newLayout]
 
     setLayouts(updatedLayouts)
     setCurrentLayout(newLayout)
     setHasUnsavedChanges(false)
   }
 
+  /**
+   * Loads a saved dashboard layout
+   * @param layout - The layout to load
+   */
   const handleLoadLayout = (layout: DashboardLayout) => {
     if (hasUnsavedChanges) {
-      // Ask for confirmation before loading a different layout
       setShowNewLayoutConfirm(true)
-      // Store the layout to load after confirmation
       sessionStorage.setItem("layout-to-load", JSON.stringify(layout))
     } else {
       loadLayout(layout)
     }
   }
 
+  /**
+   * Applies a layout to the dashboard
+   * @param layout - The layout to apply
+   */
   const loadLayout = (layout: DashboardLayout) => {
     setItems([...layout.items])
     setCurrentLayout(layout)
@@ -231,6 +246,9 @@ export default function DashboardCreator() {
     setHasUnsavedChanges(false)
   }
 
+  /**
+   * Initiates creation of a new layout
+   */
   const handleNewLayout = () => {
     if (hasUnsavedChanges) {
       setShowNewLayoutConfirm(true)
@@ -239,6 +257,9 @@ export default function DashboardCreator() {
     }
   }
 
+  /**
+   * Resets the dashboard to its initial state
+   */
   const resetLayout = () => {
     setItems([])
     setCurrentLayout(null)

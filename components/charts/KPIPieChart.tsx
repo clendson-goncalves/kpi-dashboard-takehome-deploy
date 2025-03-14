@@ -3,6 +3,13 @@
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
 import { COLORS } from "@/types/kpi"
 
+/**
+ * Props interface for the KPIPieChart component
+ * @interface KPIPieChartProps
+ * @property {Object[]} data - Array of data points for the pie chart
+ * @property {string} data[].name - The name/label of each pie segment
+ * @property {number} data[].value - The numeric value determining the size of the pie segment
+ */
 interface KPIPieChartProps {
     data: {
         name: string;
@@ -10,6 +17,11 @@ interface KPIPieChartProps {
     }[];
 }
 
+/**
+ * Pie chart component for visualizing KPI data as proportional segments
+ * @param {KPIPieChartProps} props - Component props
+ * @returns {JSX.Element} Rendered pie chart
+ */
 export default function KPIPieChart({ data }: KPIPieChartProps) {
     return (
         <ResponsiveContainer width="100%" height="100%">

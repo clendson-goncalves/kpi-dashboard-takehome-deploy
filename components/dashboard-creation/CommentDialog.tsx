@@ -1,4 +1,3 @@
-// components/dashboard-creation/comment-dialog.tsx
 "use client"
 
 import { useRef, useEffect } from "react"

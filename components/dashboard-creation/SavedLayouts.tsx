@@ -6,20 +6,31 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { Trash2, Edit } from "lucide-react"
 import type { DashboardLayout } from "@/types/dashboard"
+
+/**
+ * Interface for the SavedLayouts component props
+ * @interface SavedLayoutsProps
+ * @property {DashboardLayout[]} layouts - Array of saved dashboard layouts
+ * @property {function} onLoadLayout - Callback function to load a selected layout
+ * @property {function} onDeleteLayout - Callback function to delete a layout by ID
+ */
 interface SavedLayoutsProps {
   layouts: DashboardLayout[]
   onLoadLayout: (layout: DashboardLayout) => void
   onDeleteLayout: (id: string) => void
 }
 
+/**
+ * SavedLayouts component displays a table of saved dashboard layouts with options to load or delete them
+ * @param {SavedLayoutsProps} props - Component props
+ * @returns {JSX.Element} Rendered component
+ */
 export default function SavedLayouts({ layouts, onLoadLayout, onDeleteLayout }: SavedLayoutsProps) {
-  const [previewLayout, setPreviewLayout] = useState<DashboardLayout | null>(null)
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
 
-  const handlePreview = (layout: DashboardLayout) => {
-    setPreviewLayout(layout)
-  }
-
+  /**
+   * Handles the confirmation of layout deletion
+   */
   const handleDeleteConfirm = () => {
     if (deleteConfirmId) {
       onDeleteLayout(deleteConfirmId)

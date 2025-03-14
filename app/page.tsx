@@ -5,7 +5,13 @@ import { useState } from "react"
 import DashboardCreator from "@/components/dashboard-creation/DashboardCreator"
 import LibraryHeader from "@/components/library-dashboard/LibraryHeader"
 
+/**
+ * Home component - Main application page
+ * Manages the KPI dashboard interface with tabs for different sections
+ * Handles search and category filtering for KPIs
+ */
 export default function Home() {
+  // State for search and category filtering
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
 

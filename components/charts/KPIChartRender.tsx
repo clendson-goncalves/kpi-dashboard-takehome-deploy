@@ -3,12 +3,24 @@
 import KPILineChart from "@/components/charts/KPILineChart"
 import KPIBarChart from "@/components/charts/KPIBarChart"
 import KPIPieChart from "@/components/charts/KPIPieChart"
+import type { ChartType } from "@/types/dashboard"
 
+/**
+ * Props interface for the KPIChartRender component
+ * @interface KPIChartRenderProps
+ * @property {ChartType} type - The type of chart to render (bar, line, or pie)
+ * @property {Array<any>} data - The data to be visualized in the chart
+ */
 interface KPIChartRenderProps {
-  type: string
+  type: ChartType
   data: any[]
 }
 
+/**
+ * Component that renders different types of KPI charts based on the provided type
+ * @param {KPIChartRenderProps} props - Component props
+ * @returns {JSX.Element} Rendered chart component
+ */
 export default function KPIChartRender({ type, data }: KPIChartRenderProps) {
   if (!data || data.length === 0) {
     return (
@@ -18,6 +30,10 @@ export default function KPIChartRender({ type, data }: KPIChartRenderProps) {
     )
   }
 
+  /**
+   * Renders the appropriate chart component based on the type
+   * @returns {JSX.Element} The rendered chart component
+   */
   const renderKPIChart = () => {
     switch (type) {
       case "bar":

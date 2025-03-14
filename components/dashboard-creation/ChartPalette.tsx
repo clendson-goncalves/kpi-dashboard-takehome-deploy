@@ -21,19 +21,36 @@ import {
 } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
 
+/**
+ * Props for the ChartPalette component
+ */
 interface ChartPaletteProps {
+  /** Callback function when a chart is added */
   onAddChart: (type: ChartType, kpiId: string) => void
 }
 
+/**
+ * Props for the ChartOption component
+ */
 interface ChartOptionProps {
+  /** Type of chart */
   type: ChartType
+  /** Icon component to display */
   icon: React.ReactNode
+  /** Callback function when chart is added */
   onAddChart: (type: ChartType, kpiId: string) => void
+  /** ID of the KPI to visualize */
   kpiId: string
+  /** Whether the chart option is disabled */
   disabled: boolean
+  /** Additional CSS classes */
   className?: string
 }
 
+/**
+ * ChartOption component
+ * Represents a draggable chart type option in the palette
+ */
 function ChartOption({ type, icon, onAddChart, kpiId, disabled, className = "" }: ChartOptionProps) {
   const dragRef = useRef<HTMLDivElement>(null)
   const [{ isDragging }, drag] = useDrag(
@@ -68,6 +85,11 @@ function ChartOption({ type, icon, onAddChart, kpiId, disabled, className = "" }
   )
 }
 
+/**
+ * ChartPalette component
+ * Provides a UI for selecting KPIs and chart types
+ * Handles KPI access requests and chart creation
+ */
 export default function ChartPalette({ onAddChart }: ChartPaletteProps) {
   const { kpis, requestAccess } = useKpiStore()
   const [selectedKpi, setSelectedKpi] = useState<string>("")
@@ -75,6 +97,11 @@ export default function ChartPalette({ onAddChart }: ChartPaletteProps) {
   const [accessReason, setAccessReason] = useState("")
   const [selectedKpiForAccess, setSelectedKpiForAccess] = useState<string | null>(null)
 
+  /**
+   * Handles KPI selection change
+   * Shows access request dialog if user doesn't have access
+   * @param value - Selected KPI ID
+   */
   const handleKpiChange = (value: string) => {
     const kpi = kpis.find(k => k.id === value)
     if (kpi && !kpi.hasAccess) {
@@ -85,6 +112,9 @@ export default function ChartPalette({ onAddChart }: ChartPaletteProps) {
     setSelectedKpi(value)
   }
 
+  /**
+   * Handles submitting an access request for a KPI
+   */
   const handleRequestAccess = () => {
     if (selectedKpiForAccess && accessReason) {
       requestAccess(selectedKpiForAccess, accessReason)
