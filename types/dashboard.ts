@@ -18,6 +18,7 @@ export interface Position {
     size: Size
     kpiId: string
     data: any
+    comment?: string
   }
   
   export interface DashboardLayout {

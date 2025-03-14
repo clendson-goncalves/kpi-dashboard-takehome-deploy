@@ -181,12 +181,12 @@ export default function DashboardEditor({ items, onUpdateItem, onRemoveItem, onA
     }
   }
 
-  const handleUpdateTitle = (id: string, title: string) => {
-    const item = items.find((item) => item.id === id)
-    if (item) {
-      onUpdateItem({ ...item, title })
+  const handleUpdateItemWrapper = (id: string, updates: Partial<DashboardItem>) => {
+    const existingItem = items.find(item => item.id === id);
+    if (existingItem) {
+      onUpdateItem({ ...existingItem, ...updates });
     }
-  }
+  };
 
   // Calculate grid dimensions based on items
   const calculateGridDimensions = () => {
@@ -260,9 +260,10 @@ export default function DashboardEditor({ items, onUpdateItem, onRemoveItem, onA
                 item={item}
                 onMove={handleMoveItem}
                 onResize={handleResizeItem}
-                onUpdateTitle={handleUpdateTitle}
+                onUpdateItem={handleUpdateItemWrapper}
                 onRemove={onRemoveItem}
                 getGridPosition={getGridPosition}
+                grid={GRID}
               />
             ))}
           </div>          

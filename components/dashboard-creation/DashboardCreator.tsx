@@ -109,6 +109,7 @@ export default function DashboardCreator() {
       title: `${kpi.name} (${type})`,
       kpiId,
       data,
+      comment: "",
     }
 
     setItems([...items, newItem])
@@ -284,14 +285,11 @@ export default function DashboardCreator() {
                     placeholder="Dashboard Title"
                   />
                   {hasUnsavedChanges && (
-                    <Badge variant="secondary" className="align-middle">
+                    <Badge variant="outline" className="text-[10px] font-bold h-6 bg-slate-50 hover:bg-slate-50 text-slate-700">
                       Unsaved
                     </Badge>
                   )}
                 </div>
-                {currentLayout && (
-                  <div className="flex mt-1 text-[10px] text-muted-foreground justify-start pl-2">Last updated: {new Date(currentLayout.updatedAt).toLocaleString()}</div>
-                )}
               </div>
               <div className="flex gap-2">
                 <Button

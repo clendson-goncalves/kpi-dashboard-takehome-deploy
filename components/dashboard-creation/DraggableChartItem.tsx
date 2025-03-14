@@ -4,7 +4,7 @@ import type React from "react"
 import { useState, useRef, useEffect } from "react"
 import { useDrag } from "react-dnd"
 import type { DragSourceMonitor } from "react-dnd"
-import { Grip, X, Edit, Check } from "lucide-react"
+import { Grip, X, Edit, Check, MessageCircle } from "lucide-react"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -12,23 +12,26 @@ import type { DashboardItem, Position } from "@/types/dashboard"
 import KPIChartRender from "@/components/charts/KPIChartRender"
 import { kpiData } from "@/data/mockData"
 import { GRID } from "@/components/dashboard-creation/DashboardEditor"
+import CommentDialog from "@/components/dashboard-creation/CommentDialog"
 
 interface DraggableChartItemProps {
   item: DashboardItem
   onMove: (id: string, position: Position) => void
   onResize: (id: string, width: number, height: number) => void
-  onUpdateTitle: (id: string, title: string) => void
+  onUpdateItem: (id: string, updates: Partial<DashboardItem>) => void
   onRemove: (id: string) => void
   getGridPosition: (clientX: number, clientY: number) => Position
+  grid: any
 }
 
 export default function DraggableChartItem({
   item,
   onMove,
   onResize,
-  onUpdateTitle,
+  onUpdateItem,
   onRemove,
   getGridPosition,
+  grid,
 }: DraggableChartItemProps) {
   const [editingTitle, setEditingTitle] = useState(false)
   const [title, setTitle] = useState(item.title)
@@ -43,6 +46,9 @@ export default function DraggableChartItem({
   const dragRef = useRef<HTMLDivElement>(null)
   const kpi = kpiData.find(k => k.id === item.kpiId)
 
+  const [comment, setComment] = useState(item.comment || "")
+  const [commentDialogOpen, setCommentDialogOpen] = useState(false)
+
   useEffect(() => {
     setTitle(item.title)
   }, [item.title])
@@ -53,6 +59,10 @@ export default function DraggableChartItem({
       height: item.size.height * GRID.UNITS_PER_100PX
     })
   }, [item.size])
+
+  useEffect(() => {
+    setComment(item.comment || "")
+  }, [item.comment])
 
   const [{ isDragging }, drag] = useDrag<
     { id: string; type: string },
@@ -117,8 +127,8 @@ export default function DraggableChartItem({
         // Convert back to larger grid units when updating parent
         if (currentSize.width !== item.size.width * GRID.UNITS_PER_100PX || currentSize.height !== item.size.height * GRID.UNITS_PER_100PX) {
           onResize(
-            item.id, 
-            Math.floor(currentSize.width / GRID.UNITS_PER_100PX), 
+            item.id,
+            Math.floor(currentSize.width / GRID.UNITS_PER_100PX),
             Math.floor(currentSize.height / GRID.UNITS_PER_100PX)
           )
         }
@@ -135,8 +145,13 @@ export default function DraggableChartItem({
 
   const handleTitleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    onUpdateTitle(item.id, title)
+    onUpdateItem(item.id, { title })
     setEditingTitle(false)
+  }
+
+  const handleCommentSave = () => {
+    // Update the item with the new comment
+    onUpdateItem(item.id, { comment })
   }
 
   return (
@@ -194,8 +209,25 @@ export default function DraggableChartItem({
             </Button>
           </div>
         </CardHeader>
+
         <CardContent className="p-2 h-[calc(100%-40px)] w-full bg-background/50">
           <KPIChartRender type={item.type} data={item.data} />
+
+          <Button
+            size="icon"
+            variant="secondary"
+            className="absolute bottom-2 left-2 h-8 w-8 bg-muted/90 p-2 rounded text-xs hover:bg-slate-200"
+            onClick={() => setCommentDialogOpen(true)}
+            title={comment ? "Edit comment" : "Add comment"}
+          >
+            <MessageCircle className="h-4 w-4" />
+          </Button>
+            {comment && (
+              <div className="flex absolute top-8 left-2 max-w-[80%] bg-muted/80 p-2 rounded text-xs">
+                {comment}
+              </div>
+            )}
+
         </CardContent>
         <div
           onMouseDown={handleResizeStart}
@@ -215,6 +247,14 @@ export default function DraggableChartItem({
           </svg>
         </div>
       </Card>
+      <CommentDialog
+        open={commentDialogOpen}
+        onOpenChange={setCommentDialogOpen}
+        comment={comment}
+        onCommentChange={setComment}
+        onSave={handleCommentSave}
+        chartTitle={item.title}
+      />
     </div>
   )
 } 
