@@ -1,14 +1,11 @@
 "use client"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { KPIList } from "@/components/kpi-interface/KPIList"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import DashboardCreator from "@/components/dashboard-creation/DashboardCreator"
 import LibraryHeader from "@/components/library-dashboard/LibraryHeader"
 
-type TabType = "featured" | "kpi" | "layouts" | "storyboards"
-
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<TabType>("kpi")
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
 
@@ -23,7 +20,7 @@ export default function Home() {
 
       <div className="mx-auto max-w-[768px]">
         <div className="rounded-md px-4 py-3">
-          <Tabs defaultValue="kpi" onValueChange={(value) => setActiveTab(value as TabType)}>
+          <Tabs defaultValue="kpi">
             <div className="flex justify-center items-center px-4 mb-6">
               <TabsList className="w-full rounded-md">
                 <TabsTrigger value="featured" className="min-h-9">Featured</TabsTrigger>
@@ -35,7 +32,7 @@ export default function Home() {
 
             <TabsContent value="featured" className="px-4 py-8 space-y-10">
               <div className="text-center text-muted-foreground py-8">
-                Featured content coming soon
+                Featured content coming soon.
               </div>
             </TabsContent>
 
@@ -51,7 +48,7 @@ export default function Home() {
 
             <TabsContent value="storyboards" className="px-4 py-8 space-y-10">
               <div className="text-center text-muted-foreground py-8">
-                Storyboards content coming soon
+                Storyboards content coming soon.
               </div>
             </TabsContent>
           </Tabs>
