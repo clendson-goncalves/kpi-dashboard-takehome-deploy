@@ -86,7 +86,11 @@ export const useKpiStore = create<KPIState>((set, get) => ({
     console.log(`Access requested for KPI ${kpiId} with reason: ${reason}`)
     setTimeout(() => {
       get().grantAccess(kpiId)
-      toast.success(`The access was granted for KPI successfully.`)
+      toast.success("Access granted!", {
+        description: "You can access the KPI and use it in your dashboard.",
+        duration: 5000,
+        position: "top-right",
+      })
     }, 1000)
   },
 
