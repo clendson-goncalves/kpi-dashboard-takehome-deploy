@@ -54,8 +54,8 @@ This is a brief summary of the work completed:
 
 1. Clone the repository:
 ```bash
-git clone [repository-url]
-cd kpi-dashboard
+git clone [https://github.com/clendson-goncalves/kpi-dashboard-takehome-deploy.git]
+cd kpi-dashboard-th
 ```
 
 2. Install dependencies:

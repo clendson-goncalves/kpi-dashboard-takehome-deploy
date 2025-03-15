@@ -92,7 +92,7 @@ export function KPIDetailsModal({ kpi, isOpen, onClose }: KPIDetailsModalProps) 
     <div className="fixed inset-0 bg-black/20 z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg w-full max-w-2xl max-h-[95vh] overflow-auto p-4">
         <div className="flex justify-end items-center">
-          <div>
+          <div className="flex gap-2 text-slate-500">
             <Button variant="ghost" size="icon">
               <Link2 className="h-5 w-5" />
             </Button>
@@ -106,7 +106,7 @@ export function KPIDetailsModal({ kpi, isOpen, onClose }: KPIDetailsModalProps) 
             <div className="w-12 h-12 bg-slate-100 rounded-md flex items-center justify-center mb-2">
               <Grid className="h-7 w-7 stroke-1 text-slate-500" />
             </div>
-            <h1 className="text-2xl font-bold mb-1">{kpi.name} <Badge variant="outline" className="text-[10px] align-middle bg-slate-50 hover:bg-slate-50 text-slate-700">{kpi.category}</Badge></h1>
+            <h1 className="text-2xl font-bold mb-1">{kpi.name} <Badge variant="outline" className=" h-5 text-[10px] align-middle bg-slate-50 hover:bg-slate-50 text-slate-700">{kpi.category}</Badge></h1>
             <p className="text-slate-700 text-xs text-center max-w-[500px]">{kpi.calculation}</p>
           </div>
 

@@ -170,8 +170,8 @@ export const kpiData: KPI[] = [
     id: "innovation-index",
     name: "Innovation Index",
     description: "Evaluates the company's innovation performance through patents, new technologies, and breakthrough treatments",
-    category: "Europe",
-    accessLevel: "restricted",
+    category: "North America",
+    accessLevel: "public",
     target: 75,
     keyQuestions: [
       "How many new patents were filed this quarter?",
@@ -187,7 +187,7 @@ export const kpiData: KPI[] = [
     calculation: "Weighted score of patent filings, breakthrough designations, and novel research initiatives.",
     industryContext:
       "Leading pharmaceutical companies typically maintain innovation indices between 65-75%.",
-    hasAccess: false,
+    hasAccess: true,
   }
 ]
 
