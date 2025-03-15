@@ -223,7 +223,7 @@ export default function DraggableChartItem({
             <MessageCircle className="h-4 w-4" />
           </Button>
             {comment && (
-              <div className="flex absolute top-8 left-2 max-w-[80%] bg-muted/80 p-2 rounded text-xs">
+              <div className="flex absolute top-8 left-2 max-w-[80%] bg-slate-200 p-2 rounded text-xs">
                 {comment}
               </div>
             )}
