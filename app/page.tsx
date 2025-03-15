@@ -29,7 +29,7 @@ export default function Home() {
         <div className="rounded-md px-4">
           <Tabs defaultValue="kpi">
             <div className="flex justify-center items-center px-4 mb-6">
-              <TabsList className="w-full rounded-md">
+              <TabsList className="w-full rounded-md bg-slate-100">
                 <TabsTrigger value="featured" className="min-h-9">Featured</TabsTrigger>
                 <TabsTrigger value="kpi" className="min-h-9">KPI</TabsTrigger>
                 <TabsTrigger value="layouts" className="min-h-9">Layouts</TabsTrigger>

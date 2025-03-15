@@ -84,7 +84,7 @@ export function KPIList({ searchQuery, selectedCategory }: KPIListProps) {
               placeholder="Enter your reason..."
               value={accessReason}
               onChange={(e) => setAccessReason(e.target.value)}
-              className="w-full"
+              className="w-full focus-visible:ring-0"
             />
           </div>
 

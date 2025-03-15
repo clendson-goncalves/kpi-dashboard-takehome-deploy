@@ -59,13 +59,13 @@ export default function LibraryHeader({
                             placeholder="Type to search..."
                             value={searchQuery}
                             onChange={(e) => onSearchChange(e.target.value)}
-                            className="pl-10 bg-white w-full rounded-lg border-0 outline-none focus:ring-0 focus-visible:ring-0"
+                            className="pl-10 bg-white w-full text-sm rounded-lg border-slate-200 outline-none focus:ring-0 focus-visible:ring-0"
                         />
                     </div>
                     
                     <Select value={selectedCategory} onValueChange={onCategoryChange}>
-                        <SelectTrigger className="w-full sm:w-[180px] bg-white rounded-lg border-0 outline-none focus:ring-0 focus-visible:ring-0">
-                            <SelectValue placeholder="Select category" />
+                        <SelectTrigger className="w-full sm:w-[180px] bg-white rounded-lgtext-normal border-slate-00 focus:ring-0 focus-visible:ring-0">
+                            <SelectValue placeholder="Select category"/>
                         </SelectTrigger>
                         <SelectContent>
                             {categories.map((category) => (

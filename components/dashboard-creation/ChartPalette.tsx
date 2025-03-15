@@ -132,8 +132,8 @@ export default function ChartPalette({ onAddChart }: ChartPaletteProps) {
             Select KPI
           </Label>
           <Select value={selectedKpi} onValueChange={handleKpiChange}>
-            <SelectTrigger id="kpi-select" className="w-full">
-              <SelectValue placeholder="Choose a KPI" />
+            <SelectTrigger id="kpi-select" className="w-full text-gray-500">
+              <SelectValue placeholder="Choose a KPI"/>
             </SelectTrigger>
             <SelectContent>
               {kpis.map((kpi) => (
@@ -141,8 +141,8 @@ export default function ChartPalette({ onAddChart }: ChartPaletteProps) {
                   <div className="flex items-center justify-between w-full gap-2">
                     {!kpi.hasAccess ? (
                       <>
-                        <span className="text-muted-foreground">{kpi.name} ({kpi.category})</span>
-                        <Lock className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-slate-400">{kpi.name} ({kpi.category})</span>
+                        <Lock className="h-4 w-4 text-slate-400" />
                       </>
                     ) : (
                       <div><span>{kpi.name} ({kpi.category})</span></div>
