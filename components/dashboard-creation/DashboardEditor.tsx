@@ -50,7 +50,7 @@ interface DashboardEditorProps {
 }
 
 export default function DashboardEditor({ items, onUpdateItem, onRemoveItem, onAddItem }: DashboardEditorProps) {
-  const gridRef = useRef<HTMLDivElement>(null)
+  const gridRef = useRef<HTMLDivElement | null>(null)
   const [dropIndicator, setDropIndicator] = useState<Position | null>(null)
 
   // Calculate grid position from mouse coordinates

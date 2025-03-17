@@ -247,6 +247,14 @@ function ChartTooltipContent({
   )
 }
 
+interface LegendPayload {
+  value: any
+  id?: string
+  type?: string
+  color?: string
+  dataKey?: string
+}
+
 const ChartLegend = RechartsPrimitive.Legend
 
 function ChartLegendContent({
@@ -274,7 +282,7 @@ function ChartLegendContent({
         className
       )}
     >
-      {payload.map((item) => {
+      {payload.map((item: LegendPayload) => {
         const key = `${nameKey || item.dataKey || "value"}`
         const itemConfig = getPayloadConfigFromPayload(config, item, key)
 

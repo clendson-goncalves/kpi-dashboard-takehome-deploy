@@ -95,7 +95,7 @@ export function KPIList({ searchQuery, selectedCategory }: KPIListProps) {
             <Button
               onClick={handleSubmitRequest}>Submit Request</Button>
           </DialogFooter>
-        </DialogContent>
+        </DialogContent>      
       </Dialog>
     </div>
   )

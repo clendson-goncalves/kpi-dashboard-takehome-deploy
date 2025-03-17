@@ -1,7 +1,7 @@
 "use client"
 
 import { useRef, useEffect } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { MessageCircle } from 'lucide-react'
@@ -43,9 +43,9 @@ export default function CommentDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <MessageCircle className="h-5 w-5" />
-            <span>Add Comment to {chartTitle}</span>
+          <DialogTitle>
+            Add Comment to
+            <DialogDescription>{chartTitle}</DialogDescription>
           </DialogTitle>
         </DialogHeader>
         <div className="py-4">
@@ -54,7 +54,7 @@ export default function CommentDialog({
             value={comment}
             onChange={(e) => onCommentChange(e.target.value)}
             placeholder="Add your insight about this chart..."
-            className="resize-none"
+            className="resize-none w-full focus-visible:ring-0"
           />
         </div>
         <DialogFooter>

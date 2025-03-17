@@ -2,7 +2,7 @@
 
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { COLORS } from "@/types/kpi"
-
+import { getMinMaxValues } from "@/lib/utils"
 /**
  * Props interface for the KPILineChart component
  * @interface KPILineChartProps
@@ -17,21 +17,6 @@ interface KPILineChartProps {
   }[];
 }
 
-/**
- * Calculates the minimum and maximum values from the chart data
- * @param {KPILineChartProps['data']} data - The chart data
- * @returns {[number, number]} Array containing [min, max] values
- */
-const getMinMaxValues = (data: KPILineChartProps['data']) => {
-  const values = data.flatMap(item => Object.values(item).filter(value => typeof value === 'number'));
-  return [Math.min(...values), Math.max(...values)];
-};
-
-/**
- * Line chart component for visualizing KPI data trends over time
- * @param {KPILineChartProps} props - Component props
- * @returns {JSX.Element} Rendered line chart
- */
 export default function KPILineChart({ data }: KPILineChartProps) {
   return (
     <ResponsiveContainer width="100%" height="100%">

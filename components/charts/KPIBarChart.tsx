@@ -2,7 +2,7 @@
 
 import { ResponsiveContainer, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Bar } from 'recharts';
 import { COLORS } from "@/types/kpi"
-
+import { getMinMaxValues } from "@/lib/utils"
 /**
  * Props interface for the KPIBarChart component
  * @interface KPIBarChartProps
@@ -18,15 +18,7 @@ interface KPIBarChartProps {
 }
 
 /**
- * Calculates the minimum and maximum values from the chart data
- * @param {KPIBarChartProps['data']} data - The chart data
- * @returns {[number, number]} Array containing [min, max] values
- */
-const getMinMaxValues = (data: KPIBarChartProps['data']) => {
-  const values = data.flatMap(item => Object.values(item).filter(value => typeof value === 'number'));
-  return [Math.min(...values), Math.max(...values)];
-};
-
+ * Bar chart component for visualizing KPI data
 /**
  * Bar chart component for visualizing KPI data
  * @param {KPIBarChartProps} props - Component props
